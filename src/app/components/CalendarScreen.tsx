@@ -1,4 +1,4 @@
-import { ArrowLeft, MoreVertical, Mic, MessageCircle, Radio, ChevronRight, Plus, Sparkles, X, Users } from 'lucide-react';
+import { ArrowLeft, Mic, MessageCircle, Radio, ChevronRight, Plus, Sparkles, X, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useEventPeriod } from './eventPeriodContext';
@@ -283,16 +283,11 @@ export function CalendarScreen() {
   return (
     <div className="h-full flex flex-col bg-gray-50">
       {/* Header */}
-      <div className="bg-white px-4 h-14 flex items-center justify-between border-b">
-        <div className="flex items-center gap-3">
-          <button onClick={() => navigate(`/event/${eventId}/home`)} className="p-1">
-            <ArrowLeft className="w-6 h-6 text-gray-700" />
-          </button>
-          <h1 className="font-bold text-[22px]">Calendar</h1>
-        </div>
-        <button className="p-1">
-          <MoreVertical className="w-6 h-6 text-gray-700" />
+      <div className="bg-white px-4 h-14 flex items-center border-b">
+        <button onClick={() => navigate(`/event/${eventId}/home`)} className="p-1">
+          <ArrowLeft className="w-6 h-6 text-gray-700" />
         </button>
+        <h1 className="font-bold text-[22px] ml-3">Calendar</h1>
       </div>
 
       {/* Day Tabs */}
