@@ -10,7 +10,9 @@ This repository hosts the high-fidelity interactive prototype built for a Bachel
 
 ## Live demo
 
-The latest `main` is auto-deployed via Vercel. Open the deployment URL on a phone (or in browser DevTools mobile view, ~390px width) for the intended layout. The app uses `BrowserRouter`, so any deep link works after a hard reload thanks to the SPA fallback in [`vercel.json`](./vercel.json).
+**[event-connect-phi.vercel.app](https://event-connect-phi.vercel.app/events)**
+
+Auto-deployed from `main` via Vercel on every push. Open the link on a phone (or in browser DevTools mobile view, ~390px width) for the intended layout. The app uses `BrowserRouter`, so any deep link works after a hard reload thanks to the SPA fallback in [`vercel.json`](./vercel.json).
 
 ---
 
