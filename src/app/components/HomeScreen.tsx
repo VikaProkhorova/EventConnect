@@ -2,6 +2,7 @@ import { ArrowLeft, ChevronRight, FileText, Users, UserCircle, Images, Calendar,
 import { useNavigate, useParams } from 'react-router';
 import { useEffect, useMemo, useState } from 'react';
 import { MatchCard } from './MatchCard';
+import { SwipeableCard } from './SwipeableCard';
 import { getMatchCandidates, rankCandidatesByMatch, toStoredPerson } from './mockUsers';
 import {
   addToHidden,
@@ -325,7 +326,7 @@ export function HomeScreen() {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50">
+    <div className="h-full overflow-x-hidden overflow-y-auto bg-gray-50">
       <div className="sticky top-0 z-10 bg-white px-4 py-4 border-b flex items-center gap-3 relative">
         <button onClick={() => navigate('/events')} className="p-1">
           <ArrowLeft className="w-6 h-6 text-gray-700" />
@@ -599,29 +600,34 @@ export function HomeScreen() {
                 </button>
               </div>
             ) : topMatch ? (
-              <MatchCard
+              <SwipeableCard
                 key={topMatch.id}
-                userId={topMatch.id}
-                name={topMatch.name}
-                position={topMatch.position}
-                company={topMatch.company}
-                photoUrl={topMatch.image}
-                matchScore={topMatchScore}
-                location="At the event"
-                matchedInterests={topMatch.matchTags}
-                wantsToTalkAbout={topMatch.wantToTalkAbout}
-                conversationStarters={[
-                  { text: `${topMatch.interests[0] ?? topMatch.matchTags[0] ?? 'topic'}?` },
-                  {
-                    text: `${topMatch.matchTags[0] ?? topMatch.interests[0] ?? 'best'} best practices`,
-                    isAiGenerated: true,
-                  },
-                ]}
-                alsoInterestedIn={topMatch.interests}
-                state="default"
                 onLike={handleTopMatchLike}
-                onDismiss={handleTopMatchDismiss}
-              />
+                onHide={handleTopMatchDismiss}
+              >
+                <MatchCard
+                  userId={topMatch.id}
+                  name={topMatch.name}
+                  position={topMatch.position}
+                  company={topMatch.company}
+                  photoUrl={topMatch.image}
+                  matchScore={topMatchScore}
+                  location="At the event"
+                  matchedInterests={topMatch.matchTags}
+                  wantsToTalkAbout={topMatch.wantToTalkAbout}
+                  conversationStarters={[
+                    { text: `${topMatch.interests[0] ?? topMatch.matchTags[0] ?? 'topic'}?` },
+                    {
+                      text: `${topMatch.matchTags[0] ?? topMatch.interests[0] ?? 'best'} best practices`,
+                      isAiGenerated: true,
+                    },
+                  ]}
+                  alsoInterestedIn={topMatch.interests}
+                  state="default"
+                  onLike={handleTopMatchLike}
+                  onDismiss={handleTopMatchDismiss}
+                />
+              </SwipeableCard>
             ) : (
               <div className="bg-white rounded-2xl p-6 text-center text-sm text-gray-500 shadow-sm">
                 You're all caught up — no new matches at the moment.
