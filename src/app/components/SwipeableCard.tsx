@@ -20,7 +20,8 @@ const DRAG_THRESHOLD = 70;     // px to commit on slow drag
 const FLICK_VELOCITY = 0.5;    // px/ms — fast flick commits even if shorter
 const FLICK_MIN_DISTANCE = 25; // px — but flick still has to *go* somewhere
 const TAP_THRESHOLD = 6;       // px under this counts as a tap, not a drag
-const EXIT_DURATION_MS = 380;  // exit fly-off animation length
+const LIKE_EXIT_MS = 380;      // exit fly-off length when swiped right
+const HIDE_EXIT_MS = 520;      // longer for left — hide felt too snappy
 const EXIT_DISTANCE = 520;     // px — far enough that the card fully leaves
 const SNAPBACK_MS = 220;       // when the drag didn't commit
 
@@ -68,10 +69,11 @@ export function SwipeableCard({
       const dir: 'like' | 'hide' = goLike ? 'like' : 'hide';
       setIsDragging(false);
       setExiting(dir);
+      const exitMs = dir === 'like' ? LIKE_EXIT_MS : HIDE_EXIT_MS;
       exitTimer.current = window.setTimeout(() => {
         if (dir === 'like') onLike?.();
         else onHide?.();
-      }, EXIT_DURATION_MS);
+      }, exitMs);
     } else {
       setDragX(0);
       setIsDragging(false);
@@ -153,11 +155,11 @@ export function SwipeableCard({
   if (exiting === 'like') {
     transform = `translateX(${EXIT_DISTANCE}px) rotate(22deg)`;
     opacity = 0;
-    transitionMs = EXIT_DURATION_MS;
+    transitionMs = LIKE_EXIT_MS;
   } else if (exiting === 'hide') {
     transform = `translateX(${-EXIT_DISTANCE}px) rotate(-22deg)`;
     opacity = 0;
-    transitionMs = EXIT_DURATION_MS;
+    transitionMs = HIDE_EXIT_MS;
   } else if (!mounted) {
     transform = 'translateY(8px) scale(0.96)';
     opacity = 0;
@@ -184,7 +186,7 @@ export function SwipeableCard({
           style={{
             transform: `rotate(-12deg) scale(${0.8 + likeStrength * 0.5})`,
             opacity: 0.5 + likeStrength * 0.5,
-            transition: `transform ${EXIT_DURATION_MS}ms ease-out, opacity ${EXIT_DURATION_MS}ms ease-out`,
+            transition: `transform ${LIKE_EXIT_MS}ms ease-out, opacity ${LIKE_EXIT_MS}ms ease-out`,
           }}
         >
           <Heart className="w-4 h-4 fill-white" /> LIKE
@@ -196,7 +198,7 @@ export function SwipeableCard({
           style={{
             transform: `rotate(12deg) scale(${0.8 + hideStrength * 0.5})`,
             opacity: 0.5 + hideStrength * 0.5,
-            transition: `transform ${EXIT_DURATION_MS}ms ease-out, opacity ${EXIT_DURATION_MS}ms ease-out`,
+            transition: `transform ${HIDE_EXIT_MS}ms ease-out, opacity ${HIDE_EXIT_MS}ms ease-out`,
           }}
         >
           <X className="w-4 h-4" /> HIDE
