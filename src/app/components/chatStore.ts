@@ -211,111 +211,31 @@ export function markGalleryViewed(): void {
 
 /* ───────── default seed ───────── */
 
-const SEED_FLAG = 'chatStore_seeded_v1';
+const SEED_FLAG = 'chatStore_seeded_v2';
 
 /**
- * Seeds default state on first run so the Messages tab has content
- * to demo without going through Participants first.
+ * Resets the deck buckets to empty and (re-)seeds only the demo group
+ * chat. Bumping SEED_FLAG to _v2 makes every existing session re-run
+ * this once and clear any leftover seed data from the previous version.
  *
- * - Sarah Johnson — connection with a small message history.
- * - Michael Chen ('1') — connection without messages → "New connection" CTA.
- * - Emma Rodriguez ('2') — liked, with one inbound message → appears in Liked tab.
- *
- * Idempotent: only runs once per session (gated by SEED_FLAG).
+ * Liked / Connections / Hidden start empty so the user runs the swipe
+ * deck from scratch. 1:1 chat history is also cleared so nobody shows
+ * "messages" in the Chat tab without the user actually starting one.
  */
 export function seedChatStoreOnce(): void {
   if (sessionStorage.getItem(SEED_FLAG)) return;
 
-  // Connections
-  const seedConnections: StoredPerson[] = [
-    {
-      id: 'sarah-johnson',
-      name: 'Sarah Johnson',
-      position: 'Product Designer',
-      company: 'Figma',
-      image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-      matchTags: ['UX Design', 'Product', 'AI'],
-      wantToTalkAbout: ['AI in design tools and automation workflows'],
-      interests: ['UX Design', 'Product Strategy', 'AI & Machine Learning', 'Design Systems'],
-    },
-    {
-      id: '1',
-      name: 'Michael Chen',
-      position: 'Senior Product Manager',
-      company: 'Google',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-      matchTags: ['Product', 'AI', 'Technology'],
-      wantToTalkAbout: ['Building AI-powered features', 'Scaling teams'],
-      interests: ['Product Strategy', 'AI', 'Data Analytics', 'Leadership'],
-    },
-  ];
-  const existingConnections = getConnections();
-  if (existingConnections.length === 0) {
-    writeJson('connections', seedConnections);
-  }
+  // Hard reset of the swipe-deck buckets.
+  writeJson('connections', []);
+  writeJson('likedProfiles', []);
+  writeJson('hiddenProfiles', []);
 
-  // Liked
-  const seedLiked: StoredPerson[] = [
-    {
-      id: '2',
-      name: 'Emma Rodriguez',
-      position: 'UX Research Lead',
-      company: 'Airbnb',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
-      matchTags: ['Design', 'Research', 'UX'],
-      wantToTalkAbout: ['Quantitative vs qualitative research methods'],
-      interests: ['User Research', 'Design Thinking', 'Psychology', 'UX Design'],
-    },
-  ];
-  const existingLiked = getLikedProfiles();
-  if (existingLiked.length === 0) {
-    writeJson('likedProfiles', seedLiked);
-  }
-
-  // Sarah — populated history
-  if (!hasMessages('sarah-johnson')) {
-    const baseTs = Date.now() - 60 * 60 * 1000;
-    const seed: ChatMessage[] = [
-      {
-        id: 'm1',
-        text: "Hi! I saw we're both interested in AI in design tools. Would love to connect!",
-        sentAt: new Date(baseTs).toISOString(),
-        isOutgoing: false,
-      },
-      {
-        id: 'm2',
-        text: "Hey Sarah! Absolutely, I'd love to chat about that. Are you going to the AI workshop tomorrow?",
-        sentAt: new Date(baseTs + 3 * 60 * 1000).toISOString(),
-        isOutgoing: true,
-        read: true,
-      },
-      {
-        id: 'm3',
-        text: 'Yes! Looking forward to it. Want to grab coffee before?',
-        sentAt: new Date(baseTs + 5 * 60 * 1000).toISOString(),
-        isOutgoing: false,
-      },
-      {
-        id: 'm4',
-        text: 'Looking forward to our meeting tomorrow!',
-        sentAt: new Date(baseTs + 7 * 60 * 1000).toISOString(),
-        isOutgoing: false,
-      },
-    ];
-    writeJson(messagesKey('sarah-johnson'), seed);
-  }
-
-  // Emma — single inbound message so she shows up in Liked
-  if (!hasMessages('2')) {
-    const seed: ChatMessage[] = [
-      {
-        id: 'em1',
-        text: 'Can you share that article you mentioned?',
-        sentAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        isOutgoing: false,
-      },
-    ];
-    writeJson(messagesKey('2'), seed);
+  // Wipe any 1:1 message threads left over from the v1 seed (Sarah, Emma).
+  for (let i = sessionStorage.length - 1; i >= 0; i--) {
+    const key = sessionStorage.key(i);
+    if (key && key.startsWith('messages_') && key !== messagesKey('general')) {
+      sessionStorage.removeItem(key);
+    }
   }
 
   // General event chat — welcome from organizer + a couple of attendee messages

@@ -38,9 +38,13 @@ export function SwipeableCard({
   const [exiting, setExiting] = useState<null | 'like' | 'hide'>(null);
   const [mounted, setMounted] = useState(false);
   const startX = useRef(0);
+  const startY = useRef(0);
   const startTime = useRef(0);
   const wasDragged = useRef(false);
   const activePointerId = useRef<number | null>(null);
+  // Axis-lock: locked to 'x' once we know it's a horizontal swipe, 'y' if it
+  // turned out to be a vertical scroll. Set on the first ~10px of motion.
+  const axisLock = useRef<null | 'x' | 'y'>(null);
   const exitTimer = useRef<number | null>(null);
 
   // Trigger entrance animation after first paint; cleanup any timers.
@@ -81,12 +85,26 @@ export function SwipeableCard({
 
     activePointerId.current = e.pointerId;
     startX.current = e.clientX;
+    startY.current = e.clientY;
     startTime.current = performance.now();
     wasDragged.current = false;
+    axisLock.current = null;
+
+    const AXIS_DECIDE_PX = 10; // total movement before we commit to an axis
 
     const onMove = (ev: PointerEvent) => {
       if (ev.pointerId !== activePointerId.current) return;
       const dx = ev.clientX - startX.current;
+      const dy = ev.clientY - startY.current;
+
+      // Decide axis on the first significant motion. If it's predominantly
+      // vertical, we step out and let the browser handle native scroll.
+      if (axisLock.current === null) {
+        if (Math.hypot(dx, dy) < AXIS_DECIDE_PX) return;
+        axisLock.current = Math.abs(dy) > Math.abs(dx) ? 'y' : 'x';
+      }
+      if (axisLock.current === 'y') return;
+
       if (Math.abs(dx) > TAP_THRESHOLD) {
         wasDragged.current = true;
         setIsDragging(true);
@@ -99,8 +117,17 @@ export function SwipeableCard({
       document.removeEventListener('pointermove', onMove);
       document.removeEventListener('pointerup', onUp);
       document.removeEventListener('pointercancel', onUp);
+
+      // Vertical scroll — clean up but don't commit anything.
+      if (axisLock.current === 'y') {
+        activePointerId.current = null;
+        axisLock.current = null;
+        return;
+      }
+
       const finalDx = ev.clientX - startX.current;
       const dt = performance.now() - startTime.current;
+      axisLock.current = null;
       finish(finalDx, dt);
     };
 
