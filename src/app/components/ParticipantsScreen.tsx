@@ -246,11 +246,11 @@ export function ParticipantsScreen() {
       )}
 
       {activeTab === 'matches' && gateOpen && (
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 overflow-x-hidden overflow-y-auto p-4">
           <p className="text-xs text-gray-500 italic mb-3 text-center">
             Swipe right to like · Swipe left to hide
           </p>
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-x-hidden">
             {rankCandidatesByMatch(
               mockParticipants.filter(person =>
                 !likedProfiles.find(p => p.id === person.id) &&

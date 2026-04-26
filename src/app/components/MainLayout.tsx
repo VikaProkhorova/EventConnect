@@ -18,8 +18,8 @@ export function MainLayout() {
   const currentTab = pathParts[pathParts.length - 1] || 'home';
 
   return (
-    <div className="h-full w-full flex flex-col bg-white">
-      <div className="flex-1 overflow-y-auto">
+    <div className="h-full w-full flex flex-col bg-white overflow-x-hidden">
+      <div className="flex-1 overflow-x-hidden overflow-y-auto">
         <Outlet />
       </div>
 
