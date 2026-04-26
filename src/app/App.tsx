@@ -12,15 +12,27 @@ import { InfoScreen } from './components/InfoScreen';
 import { GalleryScreen } from './components/GalleryScreen';
 import { CalendarScreen } from './components/CalendarScreen';
 import { NetworkScreen } from './components/NetworkScreen';
+import { SettingsScreen } from './components/SettingsScreen';
+import { FeedbackScreen } from './components/FeedbackScreen';
+import { MasterProfileScreen } from './components/MasterProfileScreen';
+import { LoginScreen } from './components/LoginScreen';
+import { OnboardingScreen } from './components/OnboardingScreen';
+import { EventPeriodProvider } from './components/eventPeriodContext';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <div className="h-screen w-screen bg-white overflow-hidden">
-        <Routes>
+    <EventPeriodProvider>
+      <BrowserRouter>
+        <div className="h-screen w-screen bg-white overflow-hidden">
+          <Routes>
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/welcome" element={<OnboardingScreen />} />
+          <Route path="/me" element={<MasterProfileScreen />} />
           <Route path="/events" element={<EventsScreen />} />
           <Route path="/event/:eventId/chat/:chatId" element={<ChatConversationScreen />} />
           <Route path="/event/:eventId/user/:userId" element={<OtherUserProfile />} />
+          <Route path="/event/:eventId/settings" element={<SettingsScreen />} />
+          <Route path="/event/:eventId/feedback" element={<FeedbackScreen />} />
           <Route path="/event/:eventId/*" element={<MainLayout />}>
             <Route path="home" element={<HomeScreen />} />
             <Route path="participants" element={<ParticipantsScreen />} />
@@ -35,7 +47,8 @@ export default function App() {
           </Route>
           <Route path="/" element={<Navigate to="/events" replace />} />
         </Routes>
-      </div>
-    </BrowserRouter>
+        </div>
+      </BrowserRouter>
+    </EventPeriodProvider>
   );
 }

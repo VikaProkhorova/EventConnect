@@ -6,6 +6,7 @@ interface MatchOverlayProps {
   show: boolean;
   onClose: () => void;
   user: {
+    id?: string;
     name: string;
     position: string;
     company: string;
@@ -30,7 +31,7 @@ export function MatchOverlay({ show, onClose, user, currentUser }: MatchOverlayP
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 z-50 flex flex-col items-center justify-center p-6"
+      className="fixed inset-0 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-400 z-50 flex flex-col items-center justify-center p-6"
     >
       <button
         onClick={onClose}
@@ -44,9 +45,9 @@ export function MatchOverlay({ show, onClose, user, currentUser }: MatchOverlayP
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        <h1 className="text-white font-bold text-5xl mb-2 text-center">It's a Match!</h1>
+        <h1 className="text-white font-bold text-5xl mb-2 text-center whitespace-nowrap">New Connection</h1>
         <p className="text-white/90 text-center text-lg mb-12">
-          You and {user.name} both liked each other
+          You and {user.name} showed mutual interest
         </p>
       </motion.div>
 
@@ -71,7 +72,7 @@ export function MatchOverlay({ show, onClose, user, currentUser }: MatchOverlayP
           transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
         >
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-xl">
-            <span className="text-4xl">❤️</span>
+            <span className="text-4xl">🤝</span>
           </div>
         </motion.div>
 
@@ -91,20 +92,23 @@ export function MatchOverlay({ show, onClose, user, currentUser }: MatchOverlayP
         transition={{ delay: 0.8 }}
         className="w-full max-w-sm space-y-3"
       >
+        <p className="text-white/80 text-center text-sm mb-2">
+          Now is the best time to reach out
+        </p>
         <button
           onClick={() => {
             onClose();
-            navigate(`/event/${eventId}/chat/1`);
+            navigate(`/event/${eventId}/chat/${user.id ?? 'sarah-johnson'}`);
           }}
-          className="w-full bg-white text-purple-600 py-4 rounded-full font-bold text-lg shadow-xl hover:scale-105 transition-transform"
+          className="w-full bg-white text-blue-600 py-4 rounded-full font-bold text-lg shadow-xl hover:scale-105 transition-transform"
         >
-          Write now!
+          Start conversation
         </button>
         <button
           onClick={onClose}
           className="w-full bg-white/20 backdrop-blur text-white py-4 rounded-full font-semibold border-2 border-white hover:bg-white/30 transition-colors"
         >
-          Continue
+          Continue browsing
         </button>
       </motion.div>
     </motion.div>

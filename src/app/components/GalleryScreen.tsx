@@ -1,30 +1,36 @@
-import { ArrowLeft, Heart, Share2, Download, X } from 'lucide-react';
+import { ArrowLeft, Plus, Heart, Share2, Download, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
-import { useState } from 'react';
-import { useAsync } from '@/api/provider';
-import type { EventId, Photo } from '@/domain/types';
+import { useState, useEffect } from 'react';
+import { professionalPhotos, guestPhotos } from './mockGallery';
+import { markGalleryViewed } from './chatStore';
+import { useEventPeriod } from './eventPeriodContext';
 
 export function GalleryScreen() {
   const navigate = useNavigate();
-  const { eventId: eventIdParam } = useParams();
-  const eventId = (eventIdParam ?? '') as EventId;
-
-  const [activeTab, setActiveTab] = useState<'photographer' | 'guest'>('photographer');
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const { eventId } = useParams();
+  const [activeTab, setActiveTab] = useState<'photographer' | 'guests'>('guests');
+  const [selectedPhoto, setSelectedPhoto] = useState<{ url: string; author?: string; likes: number } | null>(null);
   const [likedPhotos, setLikedPhotos] = useState<Set<string>>(new Set());
+  const { period: eventPeriod } = useEventPeriod();
+  const [showTooltip, setShowTooltip] = useState(false);
 
-  const photos = useAsync(
-    (api) => api.gallery.list(eventId, activeTab),
-    [eventId, activeTab],
-  );
+  // Mark gallery as viewed so the "+N new" badge on Home disappears.
+  useEffect(() => {
+    markGalleryViewed();
+  }, []);
 
-  const toggleLike = (photoId: string) => {
-    setLikedPhotos((prev) => {
-      const next = new Set(prev);
-      if (next.has(photoId)) next.delete(photoId);
-      else next.add(photoId);
-      return next;
-    });
+  const actualGuestPhotos = eventPeriod === 'before' ? [] : guestPhotos;
+  const actualProfessionalPhotos = eventPeriod === 'before' ? [] : professionalPhotos;
+  const photos = activeTab === 'photographer' ? actualProfessionalPhotos : actualGuestPhotos;
+
+  const toggleLike = (photoUrl: string) => {
+    const newLiked = new Set(likedPhotos);
+    if (newLiked.has(photoUrl)) {
+      newLiked.delete(photoUrl);
+    } else {
+      newLiked.add(photoUrl);
+    }
+    setLikedPhotos(newLiked);
   };
 
   return (
@@ -38,90 +44,125 @@ export function GalleryScreen() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => setActiveTab('photographer')}
+            onClick={() => setActiveTab('guests')}
             className={`flex-1 py-2 rounded-lg font-medium text-sm transition-colors ${
-              activeTab === 'photographer' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
+              activeTab === 'guests' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
             }`}
           >
-            Photographer
+            By Guests ({actualGuestPhotos.length})
           </button>
           <button
-            onClick={() => setActiveTab('guest')}
+            onClick={() => setActiveTab('photographer')}
             className={`flex-1 py-2 rounded-lg font-medium text-sm transition-colors ${
-              activeTab === 'guest' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
+              activeTab === 'photographer'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-600'
             }`}
           >
-            By Guests
+            Photographer ({actualProfessionalPhotos.length})
           </button>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
-        {photos.loading && (
-          <div className="text-center text-gray-400 text-sm py-12">Loading…</div>
-        )}
-        {!photos.loading && (photos.data?.length ?? 0) === 0 && (
-          <div className="text-center text-gray-400 text-sm py-12">No photos yet.</div>
-        )}
         <div className="grid grid-cols-2 gap-3">
-          {photos.data?.map((photo, i) => (
-            <button
-              key={photo.id}
+          {photos.map((photo, i) => (
+            <div
+              key={i}
               onClick={() => setSelectedPhoto(photo)}
-              className="relative aspect-square rounded-xl overflow-hidden group"
+              className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer"
             >
               <img
                 src={photo.url}
-                alt={photo.caption ?? `Photo ${i + 1}`}
+                alt={`Photo ${i + 1}`}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between pointer-events-auto">
-                  {photo.uploadedById && (
-                    <span className="text-white text-xs font-medium truncate">{photo.caption ?? ''}</span>
+                  {activeTab === 'guests' && 'author' in photo && (
+                    <span className="text-white text-xs font-medium">{photo.author}</span>
                   )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleLike(photo.id);
+                      toggleLike(photo.url);
                     }}
                     className="ml-auto flex items-center gap-1 text-white"
                   >
                     <Heart
-                      className={`w-4 h-4 ${
-                        likedPhotos.has(photo.id) ? 'fill-red-500 text-red-500' : ''
-                      }`}
+                      className={`w-4 h-4 ${likedPhotos.has(photo.url) ? 'fill-red-500 text-red-500' : ''}`}
                     />
+                    <span className="text-xs">{photo.likes + (likedPhotos.has(photo.url) ? 1 : 0)}</span>
                   </button>
                 </div>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
 
-      {selectedPhoto && (
-        <div
-          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedPhoto(null)}
-        >
+      {activeTab === 'guests' && (
+        <div className="fixed bottom-20 right-4 z-10">
+          {eventPeriod === 'before' && showTooltip && (
+            <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-lg">
+              Photo upload opens once the event starts
+              <div className="absolute top-full right-4 -mt-1">
+                <div className="border-4 border-transparent border-t-gray-900"></div>
+              </div>
+            </div>
+          )}
           <button
-            onClick={() => setSelectedPhoto(null)}
-            className="absolute top-4 right-4 w-10 h-10 bg-white/20 backdrop-blur rounded-full flex items-center justify-center"
+            disabled={eventPeriod === 'before'}
+            onMouseEnter={() => eventPeriod === 'before' && setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all ${
+              eventPeriod === 'before'
+                ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'
+            }`}
           >
-            <X className="w-5 h-5 text-white" />
+            <Plus className="w-6 h-6" />
           </button>
-          <div className="max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
-            <img src={selectedPhoto.url} alt="" className="w-full h-auto rounded-xl" />
-            {selectedPhoto.caption && (
-              <p className="text-white text-sm mt-3 text-center">{selectedPhoto.caption}</p>
-            )}
-            <div className="flex gap-3 mt-4 justify-center">
-              <button className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-lg text-sm">
-                <Share2 className="w-4 h-4" /> Share
+        </div>
+      )}
+
+      {selectedPhoto && (
+        <div className="fixed inset-0 bg-black z-50 flex flex-col">
+          <div className="flex items-center justify-between p-4">
+            <button onClick={() => setSelectedPhoto(null)} className="text-white">
+              <X className="w-6 h-6" />
+            </button>
+            <div className="flex gap-3">
+              <button className="text-white">
+                <Share2 className="w-5 h-5" />
               </button>
-              <button className="flex items-center gap-2 bg-white/10 text-white px-4 py-2 rounded-lg text-sm">
-                <Download className="w-4 h-4" /> Save
+              <button className="text-white">
+                <Download className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center">
+            <img
+              src={selectedPhoto.url}
+              alt="Full size"
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+
+          <div className="p-4 bg-black/50">
+            <div className="flex items-center justify-between text-white">
+              {selectedPhoto.author && (
+                <span className="text-sm font-medium">By {selectedPhoto.author}</span>
+              )}
+              <button
+                onClick={() => toggleLike(selectedPhoto.url)}
+                className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full"
+              >
+                <Heart
+                  className={`w-5 h-5 ${likedPhotos.has(selectedPhoto.url) ? 'fill-red-500 text-red-500' : ''}`}
+                />
+                <span>{selectedPhoto.likes + (likedPhotos.has(selectedPhoto.url) ? 1 : 0)}</span>
               </button>
             </div>
           </div>
