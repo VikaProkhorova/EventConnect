@@ -1,4 +1,347 @@
-INTERACTION MAPEventConnect MVP � Screen Transitions,Button Behaviors & UI RulesVersion 1.0Date: April 24, 2026Companion to: EventConnect MVP SOW v2.0
-1. Global Navigation RulesThe bottom navigation bar is persistent on all screens within an event context. It has 5 tabs. The active tab is visually highlighted. Tapping the active tab scrolls to top (does not reload).TabTap ActionTarget ScreenBadge/IndicatorHomeOpens Home dashboardScreen 2: HomeNoneParticipantsOpens Participants with last active tab (default: Match)Screen 3 or 4: ParticipantsBadge: count of new matches since last visitQROpens QR Code screen (center button, visually prominent)Screen 5: QR CodeNoneChatOpens Chat list with last active tab (default: All)Screen 6: Chat ListBadge: total unread message countProfileOpens own ProfileScreen 8: Profile (own)Red dot if profile < 100% completeEvent Switcher (Header)ElementTap ActionBehaviorEvent photo/icon (top-right on Home)Opens event switcher dropdownInstagram-style: shows list of other registered events. Tap an event = switch context (all screens reload with new event data). Long press = go to Events screen.Back arrow "<" (top-left on Home)Navigates to Events screenScreen 1: Events. Full event list with search.
-2. Screen 1: EventsClickable ElementTap ActionTargetNotesEvent card (entire card)Opens selected eventScreen 2: Home (for that event)Loads all event data: participants, chat, calendar, etc.Event card imageSame as card tapScreen 2: HomePart of card tap areaSearch barActivates search inputStays on Screen 1Filters event list in real-time as user types. Searches by event name.Profile icon (top-right)Opens own profileScreen 8: Profile (own)Quick access to profile from events list3. Screen 2: Home (Dashboard)Networking Opportunities SectionClickable ElementTap ActionTargetNotes"97 people share your interests"Opens Participants filtered by shared interestsScreen 4: Participants (All tab) with Interests filter pre-appliedShows only people who share at least 1 interest"20 people from Technology"Opens Participants filtered by user's industryScreen 4: Participants (All tab) with Industry filter pre-appliedShows only people from same industry"Try to meet at least 5"Not clickableN/AStatic motivational text. No interaction.Top Match CardClickable ElementTap ActionTargetNotesMatch card (general tap on card area)Opens full profile of matched attendeeScreen: Other User's ProfileExcludes button areas belowMatch tags (Match 1, Match 2, Match 3)Not clickableN/AStatic chips showing common overlaps"Write now!" buttonOpens direct chat conversation with this personScreen 7: Chat Conversation (with this user)Creates new chat if none exists. Opens existing chat if already started."See more ?" linkOpens full profile of matched attendeeScreen: Other User's ProfileSame as card tap"See 6 more matches ?" buttonOpens Participants Match tabScreen 3: Participants (Match tab)Number is dynamic (count of unreviewed matches)Quick Access Widgets?? BUG FIX: All Quick Access widgets MUST be clickable. Each widget is a tap target that opens its corresponding screen.WidgetTap ActionTargetNotesInfo widgetOpens event info pageScreen 10: InfoShows event details, speakers, materials, agenda, floor map, sponsors, contactsParticipants widget ("108 people, +28 new")Opens Participants screenScreen 4: Participants (All tab)+28 new badge shows new attendees since last visitProfile widget ("8% complete")Opens own profile in edit modeScreen 8: Profile (own) ? Edit Profile modeDirectly opens edit mode to encourage completionGallery widget ("74 photos, +18 new")Opens GalleryScreen 11: GalleryLast photo thumbnail is part of widgetCalendar widget ("3 meetings...")Opens CalendarScreen 12: CalendarShows today's date by defaultNetwork in Real Time banner/buttonOpens live proximity mapScreen 9: Network in Real TimeOnly visible during event dates. Hidden before/after event.Notification StripClickable ElementTap ActionTargetNotesNotification: "Meeting starts in 15 min"Opens the specific meeting in CalendarScreen 12: Calendar (scrolled to that meeting)Deep-links to the specific time slotNotification: "New match with [Name]"Opens that person's profileScreen: Other User's ProfileNotification: "New message from [Name]"Opens chat conversation with that personScreen 7: Chat Conversation4. Screen 3: Participants (Match Tab)?? BUG FIX: Match cards MUST be displayed full-screen (one card at a time, like Tinder), NOT as a scrollable list. Each card takes the full screen width and height (minus header and nav). User swipes or taps buttons to go to next card.Tab NavigationTabTap ActionTargetNotesMatchShows swipeable match cardsScreen 3: Match tab (current)Full-screen cards. Locked if profile incomplete.LikedShows list of people user has liked/swiped rightScreen 3: Liked tabList view (not full-screen cards). Each entry has: avatar, name, job, company, "Profile" and "Write now" buttons.HiddenShows list of people user has swiped left/hiddenScreen 3: Hidden tabList view. Each entry has "Like" button to restore from Hidden back to visible.AllShows full attendee directory with filtersScreen 4: Participants (All tab)Switches to All tab view with search, sort, filters.Match Card (Full-Screen) Elements?? BUG FIX: Card MUST include a "Profile" button that opens the full profile of the displayed attendee.Clickable ElementTap ActionTargetNotesSwipe RIGHT on cardLike this person ? moves to Liked tabNext match card appearsHeart animation. If mutual ? "It's a Match!" overlay with option to Write now or Continue.Swipe LEFT on cardHide this person ? moves to Hidden tabNext match card appearsX animation. Can be undone from Hidden tab.? (Like) buttonSame as swipe rightNext match cardAlternative to swipe gestureX (Hide) buttonSame as swipe leftNext match cardAlternative to swipe gesture"Profile" buttonOpens full profile of this attendeeScreen: Other User's ProfileMUST be present on card. Opens detailed view with all profile sections."Write now" buttonOpens direct chat with this attendeeScreen 7: Chat ConversationCreates new chat if none existsPhoto area (tap)Opens full profileScreen: Other User's ProfileSame as Profile buttonMatch tagsNot clickableN/AStatic display of shared attributesInterest tagsNot clickableN/AStatic display5. Screen 4: Participants (All Tab + Filters)?? BUG FIX: Both Sort and Filter icons MUST be clickable. Sort opens a dropdown/bottom sheet with sort options. Filter opens filter panel.Header ActionsClickable ElementTap ActionTargetNotesSearch barActivates text inputStays on Screen 4Real-time filtering as user types. Searches name, company, position.Sort icon (??)Opens sort options bottom sheetBottom sheet overlay on Screen 4Options: By relevance (default), By name A-Z, By company, By match count. Selection applies immediately.Filter icon (funnel)Opens filter panelFilter panel slides up on Screen 4Shows all filter fields: Company, Job Position, Industry, Interests, Search by keywords, Want to talk about, Grade. "Apply Filters" button at bottom.Filter PanelClickable ElementTap ActionTargetNotesCompany fieldOpens searchable dropdown/inputInline on filter panelType to search, select from list of companies present at eventJob Position fieldOpens searchable dropdown/inputInline on filter panelType to search, select from available positionsIndustry fieldOpens multi-select listInline on filter panelCan select multiple industriesInterests fieldOpens tag selectorInline on filter panelMulti-select interest tagsSearch by keywordsActivates text inputInline on filter panelFree-text search across all profile fieldsWant to talk aboutActivates text inputInline on filter panelSearches networking goals contentGrade fieldOpens dropdownInline on filter panelOptions: Junior, Middle, Senior, Lead, Head, C-level"Apply Filters" buttonApplies selected filters and closes panelScreen 4 with filtered resultsList updates immediately. Active filter count shown on filter icon badge.Close / X on filter panelCloses panel without applyingScreen 4 (unfiltered)Discards unapplied filter changes"Reset" linkClears all filtersFilter panel (cleared)Resets all fields to defaultAttendee Card (in All tab)Clickable ElementTap ActionTargetNotesCard area (general tap)Opens full profileScreen: Other User's ProfileExcludes action buttons"Profile" buttonOpens full profileScreen: Other User's ProfileSame as card tap? (Like) buttonLikes this person (same as swipe right in Match)Stays on Screen 4, button becomes filled/highlightedPerson moves to Liked tab. If mutual ? Match notification.X (Hide) buttonHides this person (same as swipe left in Match)Card disappears from list with animationPerson moves to Hidden tab. Can be restored."Write now" buttonOpens direct chatScreen 7: Chat ConversationCreates new chat if none exists6. Screen 5: QR CodeClickable ElementTap ActionTargetNotesTab: My CodeShows own QR codeScreen 5: My Code tabDisplays: profile photo, name, job title, QR code, Share and Save buttonsTab: ScanOpens camera scannerScreen 5: Scan tabCamera viewfinder activates. Scans another user's QR code."Share" buttonOpens system share sheetOS share dialogShare QR code image via any app (Telegram, email, AirDrop, etc.)"Save to photos" buttonSaves QR image to device galleryStays on Screen 5, shows "Saved!" confirmationDownloads QR as PNG/JPG to camera rollSuccessful QR scanBoth users redirected to each other's profilesScreen: Other User's Profile (on both devices)BOTH users see each other's profiles simultaneously. Each profile has Like button. If both Like ? instant Mutual Match notification.7. Screen 6: Chat (List)?? BUG FIX: Tapping any chat entry MUST open the full Chat Conversation screen (Screen 7) with that person. This is the primary interaction on this screen.Tab NavigationTabTap ActionTargetNotesAllShows all conversations + general event chatScreen 6: All tabDefault tab. General event chat pinned at top.MatchShows only conversations with mutual matchesScreen 6: Match tabFiltered viewLikeShows conversations with liked contactsScreen 6: Like tabFiltered viewHiddenShows conversations with hidden contactsScreen 6: Hidden tabCan unhide from hereChat Entry ElementsClickable ElementTap ActionTargetNotesChat entry (entire row)Opens conversation with this personScreen 7: Chat ConversationShows full message history. Marks messages as read.Avatar in chat entryOpens that person's profileScreen: Other User's ProfileQuick access to profile without entering chatHashtag label on entryNot clickableN/AStatic context label. Editable only from Other User's Profile.General event chat entryOpens group chatScreen 7: Chat Conversation (group mode)Group chat with all event attendees. @ mentions supported.Unread badge (number)Part of entry tap areaScreen 7: Chat ConversationBadge disappears after opening chat8. Screen 7: Chat (Conversation)?? BUG FIX: Read receipts (checkmarks) must ONLY appear on messages sent by the current user (outgoing messages). Incoming messages from the other person do NOT show checkmarks.Header ElementsClickable ElementTap ActionTargetNotesBack arrow ?(23)Returns to Chat listScreen 6: Chat ListNumber (23) = total unread chats across all conversations. Updated in real-time.Contact name ("Viktoriia Klym")Opens that person's profileScreen: Other User's ProfileQuick profile access from conversationHashtag labelOpens edit dialog for hashtagInline edit popupUser can change the 1-2 word hashtag for this contactProfile avatar (top-right)Opens that person's profileScreen: Other User's ProfileSame as name tap"+ Meeting" buttonOpens meeting scheduler overlayCalendar overlay on Screen 7Shows both users' calendars. Free mutual slots highlighted. See Meeting Creation Flow in SOW.Message AreaElementTap/ActionBehaviorRulesOutgoing text messageLong press ? context menuOptions: Reply, Copy, DeleteShows single ? (sent) or double ?? (read) + timestamp. RIGHT-aligned.Incoming text messageLong press ? context menuOptions: Reply, Copy, ReactNO checkmarks on incoming messages. LEFT-aligned.Image message (incoming)Tap ? opens full-screen image viewerFull-screen overlay with zoom/panPinch to zoom. Swipe down to close.Image message (outgoing)Tap ? full-screen viewerSame as incomingShows read receipts (?/??)Voice messageTap play button ? plays audioInline audio playback with waveformShows duration (e.g., 0:56). Progress bar animates during playback.Reaction emoji on messageTap ? add/change reactionEmoji picker appearsOne reaction per user per messageReply quote blockTap ? scrolls to original messageSame screen, scrolled upHighlighted briefly when scrolled toInput BarClickable ElementTap ActionTargetNotesPaperclip icon (left)Opens attachment pickerBottom sheet with optionsOptions: Photo from gallery, Take photo, Video, File/DocumentMessage text fieldActivates keyboardInline text inputTyping shows "typing..." indicator to other user. @ + name triggers mention autocomplete.Microphone icon (right)Hold to record voice messageInline recording UIPress and hold = record. Release = send. Swipe left = cancel. Shows recording duration.Send button (appears when text entered)Sends messageMessage appears in chatReplaces microphone icon when text field has content+ Meeting Flow (Calendar Overlay)StepUser ActionUI BehaviorNotes1. OpenTap "+ Meeting"Calendar overlay slides up showing both users' schedules. Mutual free slots are highlighted in green.Both calendars merged. Busy slots greyed out.2. Select slotTap a free time slotSlot becomes selected. Duration handle appears (default 15 min, draggable).Can also tap an official session to propose "Going with" instead.3. Adjust durationDrag duration handleVisual feedback of meeting lengthMinimum: 5 min. Maximum: limited by next event.4. Choose typeTap "Free Conversation" or "Personal"If Free: topic field appears (optional). Both: place field appears (optional).Free = public (others can join). Personal = private.5. ConfirmTap "Send Invite"Overlay closes. Meeting invite sent as chat message.Recipient gets push notification + in-chat invite card.6. Accept/Decline (recipient)Tap Accept or Decline on invite card in chatIf accepted: appears in both calendars. If session: "Going with [avatar]" shown.Pending state shown until response.9. Screen 8: Profile (Own)?? BUG FIX: "Edit Profile" button MUST be clickable and open an editable version of all profile fields.Profile TabsTabTap ActionContentNotesIntro (default)Shows intro content"Want to talk about...", Description, Contacts (Email/LinkedIn/Telegram), Privacy settingsDefault visible tabInterestsShows interest tagsGrid/list of interest tags (min 7 required)Each tag is a chip. In edit mode: add/remove tags.Clickable Elements (Own Profile)Clickable ElementTap ActionTargetNotes"Edit Profile" buttonEnters edit mode for all fieldsScreen 8: Edit modeAll fields become editable. "Save" button appears at bottom. "Cancel" returns to view mode.Profile photo (in edit mode)Opens photo pickerOS photo picker / cameraCan take new photo or select from galleryLinkedIn import option (in edit mode)Initiates LinkedIn OAuthLinkedIn authorization screenAfter auth: auto-fills Name, Position, Company. User can review before saving.Email linkOpens email appOS mail composerPre-fills To: field with emailLinkedIn linkOpens LinkedIn profileLinkedIn app or browserExternal linkTelegram linkOpens Telegram chatTelegram appExternal linkPrivacy: "Profile visibility in Match tab"Opens option selectorBottom sheet: All | LikedDefault: AllPrivacy: "Attendees can write to you"Opens option selectorBottom sheet: All | Liked/Match | Only MatchDefault: AllPrivacy: "Attendees can see your contacts"Opens option selectorBottom sheet: All | Liked/Match | Only MatchDefault: AllOther User's Profile (Not Own)?? BUG FIX: Other user's profile must NOT show: Privacy section, Edit Profile button, Settings. MUST show: Like, Hide, Chat buttons.Clickable ElementTap ActionTargetNotesBack arrowReturns to previous screenPrevious screen in navigation stackCould be Participants, Chat, Home, QR, etc.Like (?) buttonLikes this personStays on profile, button becomes filledSame as swipe right. If mutual ? Match notification.Hide (X) buttonHides this personReturns to previous screenPerson moved to Hidden. Can undo from Hidden tab.Chat buttonOpens direct chatScreen 7: Chat ConversationCreates new chat if none existsHashtag (add/edit)Opens hashtag edit dialogInline text input popupEnter 1-2 words (e.g., #AIMarketing). Saved on this profile and visible in chat list.Email/LinkedIn/Telegram linksOpens respective appExternal appOnly visible if user's privacy allows. If hidden: contacts section not shown.Speaker badge (if speaker)Not clickableN/AVisual indicator only. Distinct profile color for speakers.10. Screen 9: Network in Real TimeClickable ElementTap ActionTargetNotesPerson/group marker on mapOpens mini-profile card / group info overlayBottom sheet with person info or group topicShows: name, position, company (person) or topic + participant count (group). Action buttons: Profile, Write now.Mini-profile card ? "Profile"Opens full profileScreen: Other User's ProfileMini-profile card ? "Write now"Opens chatScreen 7: Chat Conversation"Add a mark" buttonOpens mark creation dialogInline dialogEnter topic/subject of conversation. Mark appears at user's current location. Auto-deletes when user moves away and no one remains.Mark on map (conversation topic)Shows mark detailsBottom sheet with topic, participants, distanceShows who's there and distance. Option to navigate/approach."Most relevant conversations" list itemOpens that mark/group on mapMap centers on that location + shows detailsScrolls/zooms map to the selected conversationBack arrowReturns to HomeScreen 2: Home11. Screen 10: Info (Event Details)Clickable ElementTap ActionTargetNotesBack arrowReturns to HomeScreen 2: HomeSpeaker card (in horizontal scroll)Opens speaker's profileScreen: Other User's Profile (speaker variant)Speaker profile has distinct color + "Speaker" badge. Same profile structure."See more ?" (speakers)Opens full speakers listSpeakers list screen (filtered Participants view or dedicated list)Shows all speakers in scrollable listMaterials: "Presentations" tabShows presentations listInline content switchList of downloadable presentation filesMaterials: "Transcripts" tabShows transcripts listInline content switchList of session transcriptsMaterials: "Records" tabShows recordings listInline content switchList of video/audio recordings with play buttonMaterial item (any file)Opens/downloads the fileIn-app viewer or downloadPDFs open in viewer. Videos play inline. Other files download.Agenda day tab (28 Friday / 29 Saturday)Switches agenda preview to that dayInline content switchShows sessions for selected dayAgenda session entryOpens session detailsBottom sheet or inline expandShows: full title, speaker(s), time, stage, description"See in Calendar ?" linkOpens Calendar screen for that dayScreen 12: Calendar (scrolled to that day/session)Deep-link to Calendar with session highlightedFloor Map imageOpens full-screen zoomable mapFull-screen overlayPinch to zoom, pan to navigateSponsor logoOpens sponsor linkExternal browserIf sponsor has URL configured by organizerContact: InstagramOpens InstagramInstagram app or browserOrganizer's InstagramContact: LinkedInOpens LinkedInLinkedIn app or browserOrganizer's LinkedInContact: GmailOpens emailOS mail composerOrganizer's email12. Screen 11: GalleryClickable ElementTap ActionTargetNotesBack arrowReturns to HomeScreen 2: HomeTab: PhotographerShows official photosScreen 11: Photographer tabPhotos uploaded by organizer/photographerTab: By GuestsShows user-uploaded photosScreen 11: By Guests tabUGC with post-moderationPhoto thumbnailOpens full-screen photo viewerFull-screen overlay with swipe navigationSwipe left/right to browse. Pinch to zoom. Shows photo credit (Name Surname).Photo credit nameOpens uploader's profileScreen: Other User's ProfileQuick access to the person who uploaded the photo"Add Photos" buttonOpens device photo pickerOS photo pickerSelect one or multiple photos. Published immediately. Appears in "By Guests" tab.13. Screen 12: CalendarHeader & Day NavigationClickable ElementTap ActionTargetNotesBack arrowReturns to HomeScreen 2: HomeDay tab (28 Friday / 29 Saturday)Switches calendar to that dayScreen 12: selected dayActive day visually highlighted"See free conversation" buttonShows filtered view of all public Free ConversationsScreen 12: filtered overlayUser's own calendar shown as background. Free Conversations overlaid. Can apply filters (topic, time).Official Session EntryClickable ElementTap ActionTargetNotesSession card (general tap)Expands session detailsInline expand or bottom sheetShows: full title, description, speaker bio, stage, time rangeSpeaker avatar on sessionOpens speaker profileScreen: Other User's Profile (speaker)"Yes" buttonRSVP: attendingButton becomes highlighted (Yes selected)Session appears as confirmed in calendar. "Maybe" deselected if was selected."Maybe" buttonRSVP: maybe attendingButton becomes highlighted (Maybe selected)Session appears as tentative (different visual style)"See all participants"Opens list of attendees going to this sessionBottom sheet with participant listEach entry clickable ? opens that person's profile"Find someone to go with"Opens list of attendees going to this session with option to inviteBottom sheet with participant list + "Invite" button per personTap "Invite" ? sends chat message with session invite. If accepted ? "Going with [avatar]" shown."Going with [avatars]"Tap avatar ? opens that person's profileScreen: Other User's ProfileShows who you're attending withPersonal Meeting EntryClickable ElementTap ActionTargetNotesMeeting cardExpands meeting detailsInline expandShows: participants, place, time, status"Yes" / "Maybe"Updates RSVP statusButton state changes"See all participants"Opens participant listBottom sheetFor meetings with 2+ participantsParticipant avatarOpens that person's profileScreen: Other User's ProfileFree Conversation EntryClickable ElementTap ActionTargetNotesFree Conversation cardExpands detailsInline expandShows: topic ("Want to talk about..."), place, participant avatars, time"Free to join" buttonJoins this free conversationButton changes to "Joined". User added to participant list.Automatically creates mark on Network in Real Time map when 2+ people present."See all participants"Opens participant listBottom sheetParticipant avatarOpens profileScreen: Other User's ProfileFree Time BlockClickable ElementTap ActionTargetNotes"Find someone to network" buttonOpens list of attendees free at this timeBottom sheet with list of available peopleShows attendees whose calendars are free during this slot. Each entry: avatar, name, position, "Write now" button.Person in free-time list ? "Write now"Opens chat with that personScreen 7: Chat ConversationCan propose meeting via "+ Meeting" in chatPerson in free-time list ? avatar/nameOpens profileScreen: Other User's Profile"34 persons are free... and 2 conversations"Not clickableN/AInformational text. Use "Find someone to network" for action.
-14. Global UI Behavior Rules14.1 Read Receipts?? BUG FIX: Checkmarks appear ONLY on outgoing (sent) messages. Never on incoming messages.Single ?: Message sent to server. Shown on outgoing messages immediately after sending.Double ??: Message read by recipient. Shown on outgoing messages after recipient opens the chat.Incoming messages: NO checkmarks. Only show sender avatar, message content, and timestamp.Chat list preview: Checkmarks shown next to last message ONLY if it was sent by current user.14.2 Match Card Display?? BUG FIX: Match tab cards must be FULL-SCREEN (one at a time), not a scrollable list.Match tab: Full-screen card view. One person per screen. Swipe left/right or use buttons.Liked tab: Scrollable list view with compact cards.Hidden tab: Scrollable list view with compact cards + "Like" button to restore.All tab: Scrollable list view with compact cards + action buttons (Profile, Like, Hide, Write now).14.3 Navigation Back BehaviorBack arrow: Always returns to the previous screen in the navigation stack (not a fixed destination).Bottom tab tap: Goes to root of that tab (e.g., Chat tab ? Chat List, not last open conversation).Swipe from left edge: Same as back arrow (iOS convention). Android uses system back button.Modal/overlay close: Returns to the screen that opened it. Does not navigate away.14.4 Profile Completion GateRequired fields: Name, Position, Grade, Company, 7+ Interests.Blocked features until complete: Match tab shows locked state with message "Complete your profile to unlock matches" and button to edit profile.Profile widget on Home: Shows completion percentage. Tapping opens edit mode directly.Unblocked features: All, Liked, Hidden tabs in Participants. Chat. QR. Calendar. Info. Gallery. Network in Real Time.14.5 Empty StatesNo matches yet: "No matches found. Try completing your profile or adjusting interests."No chats yet: "No conversations yet. Find someone in Participants and say hi!"No liked contacts: "You haven't liked anyone yet. Start exploring in Match tab!"Hidden tab empty: "No hidden contacts."No free conversations: "No free conversations scheduled yet. Create one from Chat ? + Meeting!"Network in Real Time (before event): "Available during the event. Come back on [event date]!"Network in Real Time (after event): "This feature was available during the event."Gallery empty: "No photos yet. Be the first to add one!"14.6 Mutual Match FlowTrigger: Both users Like each other (via swipe, button, or QR scan).Notification: Both users receive push: "You and [Name] are a mutual match!"In-app overlay: "It's a Match!" screen with both profiles. Buttons: "Write now" (opens chat) and "Continue" (dismisses).Chat list: Conversation moves to Match tab in Chat.Participants: User appears in Match-filtered views.
+
+
+INTERACTION MAP
+EventConnect MVP — Screen Transitions,
+Button Behaviors & UI Rules
+
+Version 1.0
+Date: April 24, 2026
+Companion to: EventConnect MVP SOW v2.0
+
+# 1. Global Navigation Rules
+The bottom navigation bar is persistent on all screens within an event context. It has 5 tabs. The active tab is visually highlighted. Tapping the active tab scrolls to top (does not reload).
+| Tab | Tap Action | Target Screen | Badge/Indicator |
+| --- | --- | --- | --- |
+| Home | Opens Home dashboard | Screen 2: Home | None |
+| Participants | Opens Participants with last active tab (default: Match) | Screen 3 or 4: Participants | Badge: count of new matches since last visit |
+| QR | Opens QR Code screen (center button, visually prominent) | Screen 5: QR Code | None |
+| Chat | Opens Chat list with last active tab (default: All) | Screen 6: Chat List | Badge: total unread message count |
+| Profile | Opens own Profile | Screen 8: Profile (own) | Red dot if profile < 100% complete |
+
+## Event Switcher (Header)
+| Element | Tap Action | Behavior |
+| --- | --- | --- |
+| Event photo/icon (top-right on Home) | Opens event switcher dropdown | Instagram-style: shows list of other registered events. Tap an event = switch context (all screens reload with new event data). Long press = go to Events screen. |
+| Back arrow "<" (top-left on Home) | Navigates to Events screen | Screen 1: Events. Full event list with search. |
+
+# 2. Screen 1: Events
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Event card (entire card) | Opens selected event | Screen 2: Home (for that event) | Loads all event data: participants, chat, calendar, etc. |
+| Event card image | Same as card tap | Screen 2: Home | Part of card tap area |
+| Search bar | Activates search input | Stays on Screen 1 | Filters event list in real-time as user types. Searches by event name. |
+| Profile icon (top-right) | Opens own profile | Screen 8: Profile (own) | Quick access to profile from events list |
+
+# 3. Screen 2: Home (Dashboard)
+## Networking Opportunities Section
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| "97 people share your interests" | Opens Participants filtered by shared interests | Screen 4: Participants (All tab) with Interests filter pre-applied | Shows only people who share at least 1 interest |
+| "20 people from Technology" | Opens Participants filtered by user's industry | Screen 4: Participants (All tab) with Industry filter pre-applied | Shows only people from same industry |
+| "Try to meet at least 5" | Not clickable | N/A | Static motivational text. No interaction. |
+
+## Top Match Card
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Match card (general tap on card area) | Opens full profile of matched attendee | Screen: Other User's Profile | Excludes button areas below |
+| Match tags (Match 1, Match 2, Match 3) | Not clickable | N/A | Static chips showing common overlaps |
+| "Write now!" button | Opens direct chat conversation with this person | Screen 7: Chat Conversation (with this user) | Creates new chat if none exists. Opens existing chat if already started. |
+| "See more →" link | Opens full profile of matched attendee | Screen: Other User's Profile | Same as card tap |
+| "See 6 more matches →" button | Opens Participants Match tab | Screen 3: Participants (Match tab) | Number is dynamic (count of unreviewed matches) |
+
+## Quick Access Widgets
+⚠️ BUG FIX: All Quick Access widgets MUST be clickable. Each widget is a tap target that opens its corresponding screen.
+| Widget | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Info widget | Opens event info page | Screen 10: Info | Shows event details, speakers, materials, agenda, floor map, sponsors, contacts |
+| Participants widget ("108 people, +28 new") | Opens Participants screen | Screen 4: Participants (All tab) | +28 new badge shows new attendees since last visit |
+| Profile widget ("8% complete") | Opens own profile in edit mode | Screen 8: Profile (own) → Edit Profile mode | Directly opens edit mode to encourage completion |
+| Gallery widget ("74 photos, +18 new") | Opens Gallery | Screen 11: Gallery | Last photo thumbnail is part of widget |
+| Calendar widget ("3 meetings...") | Opens Calendar | Screen 12: Calendar | Shows today's date by default |
+| Network in Real Time banner/button | Opens live proximity map | Screen 9: Network in Real Time | Only visible during event dates. Hidden before/after event. |
+
+## Notification Strip
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Notification: "Meeting starts in 15 min" | Opens the specific meeting in Calendar | Screen 12: Calendar (scrolled to that meeting) | Deep-links to the specific time slot |
+| Notification: "New match with [Name]" | Opens that person's profile | Screen: Other User's Profile |  |
+| Notification: "New message from [Name]" | Opens chat conversation with that person | Screen 7: Chat Conversation |  |
+
+# 4. Screen 3: Participants (Match Tab)
+⚠️ BUG FIX: Match cards MUST be displayed full-screen (one card at a time, like Tinder), NOT as a scrollable list. Each card takes the full screen width and height (minus header and nav). User swipes or taps buttons to go to next card.
+## Tab Navigation
+| Tab | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Match | Shows swipeable match cards | Screen 3: Match tab (current) | Full-screen cards. Locked if profile incomplete. |
+| Liked | Shows list of people user has liked/swiped right | Screen 3: Liked tab | List view (not full-screen cards). Each entry has: avatar, name, job, company, "Profile" and "Write now" buttons. |
+| Hidden | Shows list of people user has swiped left/hidden | Screen 3: Hidden tab | List view. Each entry has "Like" button to restore from Hidden back to visible. |
+| All | Shows full attendee directory with filters | Screen 4: Participants (All tab) | Switches to All tab view with search, sort, filters. |
+
+## Match Card (Full-Screen) Elements
+⚠️ BUG FIX: Card MUST include a "Profile" button that opens the full profile of the displayed attendee.
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Swipe RIGHT on card | Like this person → moves to Liked tab | Next match card appears | Heart animation. If mutual → "It's a Match!" overlay with option to Write now or Continue. |
+| Swipe LEFT on card | Hide this person → moves to Hidden tab | Next match card appears | X animation. Can be undone from Hidden tab. |
+| ♡ (Like) button | Same as swipe right | Next match card | Alternative to swipe gesture |
+| X (Hide) button | Same as swipe left | Next match card | Alternative to swipe gesture |
+| "Profile" button | Opens full profile of this attendee | Screen: Other User's Profile | MUST be present on card. Opens detailed view with all profile sections. |
+| "Write now" button | Opens direct chat with this attendee | Screen 7: Chat Conversation | Creates new chat if none exists |
+| Photo area (tap) | Opens full profile | Screen: Other User's Profile | Same as Profile button |
+| Match tags | Not clickable | N/A | Static display of shared attributes |
+| Interest tags | Not clickable | N/A | Static display |
+
+# 5. Screen 4: Participants (All Tab + Filters)
+⚠️ BUG FIX: Both Sort and Filter icons MUST be clickable. Sort opens a dropdown/bottom sheet with sort options. Filter opens filter panel.
+## Header Actions
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Search bar | Activates text input | Stays on Screen 4 | Real-time filtering as user types. Searches name, company, position. |
+| Sort icon (↑↓) | Opens sort options bottom sheet | Bottom sheet overlay on Screen 4 | Options: By relevance (default), By name A-Z, By company, By match count. Selection applies immediately. |
+| Filter icon (funnel) | Opens filter panel | Filter panel slides up on Screen 4 | Shows all filter fields: Company, Job Position, Industry, Interests, Search by keywords, Want to talk about, Grade. "Apply Filters" button at bottom. |
+
+## Filter Panel
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Company field | Opens searchable dropdown/input | Inline on filter panel | Type to search, select from list of companies present at event |
+| Job Position field | Opens searchable dropdown/input | Inline on filter panel | Type to search, select from available positions |
+| Industry field | Opens multi-select list | Inline on filter panel | Can select multiple industries |
+| Interests field | Opens tag selector | Inline on filter panel | Multi-select interest tags |
+| Search by keywords | Activates text input | Inline on filter panel | Free-text search across all profile fields |
+| Want to talk about | Activates text input | Inline on filter panel | Searches networking goals content |
+| Grade field | Opens dropdown | Inline on filter panel | Options: Junior, Middle, Senior, Lead, Head, C-level |
+| "Apply Filters" button | Applies selected filters and closes panel | Screen 4 with filtered results | List updates immediately. Active filter count shown on filter icon badge. |
+| Close / X on filter panel | Closes panel without applying | Screen 4 (unfiltered) | Discards unapplied filter changes |
+| "Reset" link | Clears all filters | Filter panel (cleared) | Resets all fields to default |
+
+## Attendee Card (in All tab)
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Card area (general tap) | Opens full profile | Screen: Other User's Profile | Excludes action buttons |
+| "Profile" button | Opens full profile | Screen: Other User's Profile | Same as card tap |
+| ♡ (Like) button | Likes this person (same as swipe right in Match) | Stays on Screen 4, button becomes filled/highlighted | Person moves to Liked tab. If mutual → Match notification. |
+| X (Hide) button | Hides this person (same as swipe left in Match) | Card disappears from list with animation | Person moves to Hidden tab. Can be restored. |
+| "Write now" button | Opens direct chat | Screen 7: Chat Conversation | Creates new chat if none exists |
+
+# 6. Screen 5: QR Code
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Tab: My Code | Shows own QR code | Screen 5: My Code tab | Displays: profile photo, name, job title, QR code, Share and Save buttons |
+| Tab: Scan | Opens camera scanner | Screen 5: Scan tab | Camera viewfinder activates. Scans another user's QR code. |
+| "Share" button | Opens system share sheet | OS share dialog | Share QR code image via any app (Telegram, email, AirDrop, etc.) |
+| "Save to photos" button | Saves QR image to device gallery | Stays on Screen 5, shows "Saved!" confirmation | Downloads QR as PNG/JPG to camera roll |
+| Successful QR scan | Both users redirected to each other's profiles | Screen: Other User's Profile (on both devices) | BOTH users see each other's profiles simultaneously. Each profile has Like button. If both Like → instant Mutual Match notification. |
+
+# 7. Screen 6: Chat (List)
+⚠️ BUG FIX: Tapping any chat entry MUST open the full Chat Conversation screen (Screen 7) with that person. This is the primary interaction on this screen.
+## Tab Navigation
+| Tab | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| All | Shows all conversations + general event chat | Screen 6: All tab | Default tab. General event chat pinned at top. |
+| Match | Shows only conversations with mutual matches | Screen 6: Match tab | Filtered view |
+| Like | Shows conversations with liked contacts | Screen 6: Like tab | Filtered view |
+| Hidden | Shows conversations with hidden contacts | Screen 6: Hidden tab | Can unhide from here |
+
+## Chat Entry Elements
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Chat entry (entire row) | Opens conversation with this person | Screen 7: Chat Conversation | Shows full message history. Marks messages as read. |
+| Avatar in chat entry | Opens that person's profile | Screen: Other User's Profile | Quick access to profile without entering chat |
+| Hashtag label on entry | Not clickable | N/A | Static context label. Editable only from Other User's Profile. |
+| General event chat entry | Opens group chat | Screen 7: Chat Conversation (group mode) | Group chat with all event attendees. @ mentions supported. |
+| Unread badge (number) | Part of entry tap area | Screen 7: Chat Conversation | Badge disappears after opening chat |
+
+# 8. Screen 7: Chat (Conversation)
+⚠️ BUG FIX: Read receipts (checkmarks) must ONLY appear on messages sent by the current user (outgoing messages). Incoming messages from the other person do NOT show checkmarks.
+## Header Elements
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Back arrow ←(23) | Returns to Chat list | Screen 6: Chat List | Number (23) = total unread chats across all conversations. Updated in real-time. |
+| Contact name ("Viktoriia Klym") | Opens that person's profile | Screen: Other User's Profile | Quick profile access from conversation |
+| Hashtag label | Opens edit dialog for hashtag | Inline edit popup | User can change the 1-2 word hashtag for this contact |
+| Profile avatar (top-right) | Opens that person's profile | Screen: Other User's Profile | Same as name tap |
+| "+ Meeting" button | Opens meeting scheduler overlay | Calendar overlay on Screen 7 | Shows both users' calendars. Free mutual slots highlighted. See Meeting Creation Flow in SOW. |
+
+## Message Area
+| Element | Tap/Action | Behavior | Rules |
+| --- | --- | --- | --- |
+| Outgoing text message | Long press → context menu | Options: Reply, Copy, Delete | Shows single ✓ (sent) or double ✓✓ (read) + timestamp. RIGHT-aligned. |
+| Incoming text message | Long press → context menu | Options: Reply, Copy, React | NO checkmarks on incoming messages. LEFT-aligned. |
+| Image message (incoming) | Tap → opens full-screen image viewer | Full-screen overlay with zoom/pan | Pinch to zoom. Swipe down to close. |
+| Image message (outgoing) | Tap → full-screen viewer | Same as incoming | Shows read receipts (✓/✓✓) |
+| Voice message | Tap play button → plays audio | Inline audio playback with waveform | Shows duration (e.g., 0:56). Progress bar animates during playback. |
+| Reaction emoji on message | Tap → add/change reaction | Emoji picker appears | One reaction per user per message |
+| Reply quote block | Tap → scrolls to original message | Same screen, scrolled up | Highlighted briefly when scrolled to |
+
+## Input Bar
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Paperclip icon (left) | Opens attachment picker | Bottom sheet with options | Options: Photo from gallery, Take photo, Video, File/Document |
+| Message text field | Activates keyboard | Inline text input | Typing shows "typing..." indicator to other user. @ + name triggers mention autocomplete. |
+| Microphone icon (right) | Hold to record voice message | Inline recording UI | Press and hold = record. Release = send. Swipe left = cancel. Shows recording duration. |
+| Send button (appears when text entered) | Sends message | Message appears in chat | Replaces microphone icon when text field has content |
+
+## + Meeting Flow (Calendar Overlay)
+| Step | User Action | UI Behavior | Notes |
+| --- | --- | --- | --- |
+| 1. Open | Tap "+ Meeting" | Calendar overlay slides up showing both users' schedules. Mutual free slots are highlighted in green. | Both calendars merged. Busy slots greyed out. |
+| 2. Select slot | Tap a free time slot | Slot becomes selected. Duration handle appears (default 15 min, draggable). | Can also tap an official session to propose "Going with" instead. |
+| 3. Adjust duration | Drag duration handle | Visual feedback of meeting length | Minimum: 5 min. Maximum: limited by next event. |
+| 4. Choose type | Tap "Free Conversation" or "Personal" | If Free: topic field appears (optional). Both: place field appears (optional). | Free = public (others can join). Personal = private. |
+| 5. Confirm | Tap "Send Invite" | Overlay closes. Meeting invite sent as chat message. | Recipient gets push notification + in-chat invite card. |
+| 6. Accept/Decline (recipient) | Tap Accept or Decline on invite card in chat | If accepted: appears in both calendars. If session: "Going with [avatar]" shown. | Pending state shown until response. |
+
+# 9. Screen 8: Profile (Own)
+⚠️ BUG FIX: "Edit Profile" button MUST be clickable and open an editable version of all profile fields.
+## Profile Tabs
+| Tab | Tap Action | Content | Notes |
+| --- | --- | --- | --- |
+| Intro (default) | Shows intro content | "Want to talk about...", Description, Contacts (Email/LinkedIn/Telegram), Privacy settings | Default visible tab |
+| Interests | Shows interest tags | Grid/list of interest tags (min 7 required) | Each tag is a chip. In edit mode: add/remove tags. |
+
+## Clickable Elements (Own Profile)
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| "Edit Profile" button | Enters edit mode for all fields | Screen 8: Edit mode | All fields become editable. "Save" button appears at bottom. "Cancel" returns to view mode. |
+| Profile photo (in edit mode) | Opens photo picker | OS photo picker / camera | Can take new photo or select from gallery |
+| LinkedIn import option (in edit mode) | Initiates LinkedIn OAuth | LinkedIn authorization screen | After auth: auto-fills Name, Position, Company. User can review before saving. |
+| Email link | Opens email app | OS mail composer | Pre-fills To: field with email |
+| LinkedIn link | Opens LinkedIn profile | LinkedIn app or browser | External link |
+| Telegram link | Opens Telegram chat | Telegram app | External link |
+| Privacy: "Profile visibility in Match tab" | Opens option selector | Bottom sheet: All | Liked | Default: All |
+| Privacy: "Attendees can write to you" | Opens option selector | Bottom sheet: All | Liked/Match | Only Match | Default: All |
+| Privacy: "Attendees can see your contacts" | Opens option selector | Bottom sheet: All | Liked/Match | Only Match | Default: All |
+
+## Other User's Profile (Not Own)
+⚠️ BUG FIX: Other user's profile must NOT show: Privacy section, Edit Profile button, Settings. MUST show: Like, Hide, Chat buttons.
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Back arrow | Returns to previous screen | Previous screen in navigation stack | Could be Participants, Chat, Home, QR, etc. |
+| Like (♡) button | Likes this person | Stays on profile, button becomes filled | Same as swipe right. If mutual → Match notification. |
+| Hide (X) button | Hides this person | Returns to previous screen | Person moved to Hidden. Can undo from Hidden tab. |
+| Chat button | Opens direct chat | Screen 7: Chat Conversation | Creates new chat if none exists |
+| Hashtag (add/edit) | Opens hashtag edit dialog | Inline text input popup | Enter 1-2 words (e.g., #AIMarketing). Saved on this profile and visible in chat list. |
+| Email/LinkedIn/Telegram links | Opens respective app | External app | Only visible if user's privacy allows. If hidden: contacts section not shown. |
+| Speaker badge (if speaker) | Not clickable | N/A | Visual indicator only. Distinct profile color for speakers. |
+
+# 10. Screen 9: Network in Real Time
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Person/group marker on map | Opens mini-profile card / group info overlay | Bottom sheet with person info or group topic | Shows: name, position, company (person) or topic + participant count (group). Action buttons: Profile, Write now. |
+| Mini-profile card → "Profile" | Opens full profile | Screen: Other User's Profile |  |
+| Mini-profile card → "Write now" | Opens chat | Screen 7: Chat Conversation |  |
+| "Add a mark" button | Opens mark creation dialog | Inline dialog | Enter topic/subject of conversation. Mark appears at user's current location. Auto-deletes when user moves away and no one remains. |
+| Mark on map (conversation topic) | Shows mark details | Bottom sheet with topic, participants, distance | Shows who's there and distance. Option to navigate/approach. |
+| "Most relevant conversations" list item | Opens that mark/group on map | Map centers on that location + shows details | Scrolls/zooms map to the selected conversation |
+| Back arrow | Returns to Home | Screen 2: Home |  |
+
+# 11. Screen 10: Info (Event Details)
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Back arrow | Returns to Home | Screen 2: Home |  |
+| Speaker card (in horizontal scroll) | Opens speaker's profile | Screen: Other User's Profile (speaker variant) | Speaker profile has distinct color + "Speaker" badge. Same profile structure. |
+| "See more →" (speakers) | Opens full speakers list | Speakers list screen (filtered Participants view or dedicated list) | Shows all speakers in scrollable list |
+| Materials: "Presentations" tab | Shows presentations list | Inline content switch | List of downloadable presentation files |
+| Materials: "Transcripts" tab | Shows transcripts list | Inline content switch | List of session transcripts |
+| Materials: "Records" tab | Shows recordings list | Inline content switch | List of video/audio recordings with play button |
+| Material item (any file) | Opens/downloads the file | In-app viewer or download | PDFs open in viewer. Videos play inline. Other files download. |
+| Agenda day tab (28 Friday / 29 Saturday) | Switches agenda preview to that day | Inline content switch | Shows sessions for selected day |
+| Agenda session entry | Opens session details | Bottom sheet or inline expand | Shows: full title, speaker(s), time, stage, description |
+| "See in Calendar →" link | Opens Calendar screen for that day | Screen 12: Calendar (scrolled to that day/session) | Deep-link to Calendar with session highlighted |
+| Floor Map image | Opens full-screen zoomable map | Full-screen overlay | Pinch to zoom, pan to navigate |
+| Sponsor logo | Opens sponsor link | External browser | If sponsor has URL configured by organizer |
+| Contact: Instagram | Opens Instagram | Instagram app or browser | Organizer's Instagram |
+| Contact: LinkedIn | Opens LinkedIn | LinkedIn app or browser | Organizer's LinkedIn |
+| Contact: Gmail | Opens email | OS mail composer | Organizer's email |
+
+# 12. Screen 11: Gallery
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Back arrow | Returns to Home | Screen 2: Home |  |
+| Tab: Photographer | Shows official photos | Screen 11: Photographer tab | Photos uploaded by organizer/photographer |
+| Tab: By Guests | Shows user-uploaded photos | Screen 11: By Guests tab | UGC with post-moderation |
+| Photo thumbnail | Opens full-screen photo viewer | Full-screen overlay with swipe navigation | Swipe left/right to browse. Pinch to zoom. Shows photo credit (Name Surname). |
+| Photo credit name | Opens uploader's profile | Screen: Other User's Profile | Quick access to the person who uploaded the photo |
+| "Add Photos" button | Opens device photo picker | OS photo picker | Select one or multiple photos. Published immediately. Appears in "By Guests" tab. |
+
+# 13. Screen 12: Calendar
+## Header & Day Navigation
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Back arrow | Returns to Home | Screen 2: Home |  |
+| Day tab (28 Friday / 29 Saturday) | Switches calendar to that day | Screen 12: selected day | Active day visually highlighted |
+| "See free conversation" button | Shows filtered view of all public Free Conversations | Screen 12: filtered overlay | User's own calendar shown as background. Free Conversations overlaid. Can apply filters (topic, time). |
+
+## Official Session Entry
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Session card (general tap) | Expands session details | Inline expand or bottom sheet | Shows: full title, description, speaker bio, stage, time range |
+| Speaker avatar on session | Opens speaker profile | Screen: Other User's Profile (speaker) |  |
+| "Yes" button | RSVP: attending | Button becomes highlighted (Yes selected) | Session appears as confirmed in calendar. "Maybe" deselected if was selected. |
+| "Maybe" button | RSVP: maybe attending | Button becomes highlighted (Maybe selected) | Session appears as tentative (different visual style) |
+| "See all participants" | Opens list of attendees going to this session | Bottom sheet with participant list | Each entry clickable → opens that person's profile |
+| "Find someone to go with" | Opens list of attendees going to this session with option to invite | Bottom sheet with participant list + "Invite" button per person | Tap "Invite" → sends chat message with session invite. If accepted → "Going with [avatar]" shown. |
+| "Going with [avatars]" | Tap avatar → opens that person's profile | Screen: Other User's Profile | Shows who you're attending with |
+
+## Personal Meeting Entry
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Meeting card | Expands meeting details | Inline expand | Shows: participants, place, time, status |
+| "Yes" / "Maybe" | Updates RSVP status | Button state changes |  |
+| "See all participants" | Opens participant list | Bottom sheet | For meetings with 2+ participants |
+| Participant avatar | Opens that person's profile | Screen: Other User's Profile |  |
+
+## Free Conversation Entry
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| Free Conversation card | Expands details | Inline expand | Shows: topic ("Want to talk about..."), place, participant avatars, time |
+| "Free to join" button | Joins this free conversation | Button changes to "Joined". User added to participant list. | Automatically creates mark on Network in Real Time map when 2+ people present. |
+| "See all participants" | Opens participant list | Bottom sheet |  |
+| Participant avatar | Opens profile | Screen: Other User's Profile |  |
+
+## Free Time Block
+| Clickable Element | Tap Action | Target | Notes |
+| --- | --- | --- | --- |
+| "Find someone to network" button | Opens list of attendees free at this time | Bottom sheet with list of available people | Shows attendees whose calendars are free during this slot. Each entry: avatar, name, position, "Write now" button. |
+| Person in free-time list → "Write now" | Opens chat with that person | Screen 7: Chat Conversation | Can propose meeting via "+ Meeting" in chat |
+| Person in free-time list → avatar/name | Opens profile | Screen: Other User's Profile |  |
+| "34 persons are free... and 2 conversations" | Not clickable | N/A | Informational text. Use "Find someone to network" for action. |
+
+# 14. Global UI Behavior Rules
+## 14.1 Read Receipts
+⚠️ BUG FIX: Checkmarks appear ONLY on outgoing (sent) messages. Never on incoming messages.
+Single ✓: Message sent to server. Shown on outgoing messages immediately after sending.
+Double ✓✓: Message read by recipient. Shown on outgoing messages after recipient opens the chat.
+Incoming messages: NO checkmarks. Only show sender avatar, message content, and timestamp.
+Chat list preview: Checkmarks shown next to last message ONLY if it was sent by current user.
+## 14.2 Match Card Display
+⚠️ BUG FIX: Match tab cards must be FULL-SCREEN (one at a time), not a scrollable list.
+Match tab: Full-screen card view. One person per screen. Swipe left/right or use buttons.
+Liked tab: Scrollable list view with compact cards.
+Hidden tab: Scrollable list view with compact cards + "Like" button to restore.
+All tab: Scrollable list view with compact cards + action buttons (Profile, Like, Hide, Write now).
+## 14.3 Navigation Back Behavior
+Back arrow: Always returns to the previous screen in the navigation stack (not a fixed destination).
+Bottom tab tap: Goes to root of that tab (e.g., Chat tab → Chat List, not last open conversation).
+Swipe from left edge: Same as back arrow (iOS convention). Android uses system back button.
+Modal/overlay close: Returns to the screen that opened it. Does not navigate away.
+## 14.4 Profile Completion Gate
+Required fields: Name, Position, Grade, Company, 7+ Interests.
+Blocked features until complete: Match tab shows locked state with message "Complete your profile to unlock matches" and button to edit profile.
+Profile widget on Home: Shows completion percentage. Tapping opens edit mode directly.
+Unblocked features: All, Liked, Hidden tabs in Participants. Chat. QR. Calendar. Info. Gallery. Network in Real Time.
+## 14.5 Empty States
+No matches yet: "No matches found. Try completing your profile or adjusting interests."
+No chats yet: "No conversations yet. Find someone in Participants and say hi!"
+No liked contacts: "You haven't liked anyone yet. Start exploring in Match tab!"
+Hidden tab empty: "No hidden contacts."
+No free conversations: "No free conversations scheduled yet. Create one from Chat → + Meeting!"
+Network in Real Time (before event): "Available during the event. Come back on [event date]!"
+Network in Real Time (after event): "This feature was available during the event."
+Gallery empty: "No photos yet. Be the first to add one!"
+## 14.6 Mutual Match Flow
+Trigger: Both users Like each other (via swipe, button, or QR scan).
+Notification: Both users receive push: "You and [Name] are a mutual match!"
+In-app overlay: "It's a Match!" screen with both profiles. Buttons: "Write now" (opens chat) and "Continue" (dismisses).
+Chat list: Conversation moves to Match tab in Chat.
+Participants: User appears in Match-filtered views.
