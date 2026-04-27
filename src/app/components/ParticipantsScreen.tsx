@@ -7,9 +7,8 @@ import { SwipeableCard } from './SwipeableCard';
 import { computeMatchScore, getMatchCandidates, rankCandidatesByMatch } from './mockUsers';
 import { useEventPeriod } from './eventPeriodContext';
 import {
-  FIELD_LABEL,
-  getMasterInterests,
-  getMasterProfile,
+  getEventInterests,
+  getEventProfile,
   getProfileGateMissing,
   type GateMissing,
 } from './myProfileStore';
@@ -33,8 +32,16 @@ export function ParticipantsScreen() {
   const navigate = useNavigate();
   const { eventId } = useParams();
 
-  // Re-read gate state on every render — cheap, syncs after Profile edits
-  const gateMissing: GateMissing = getProfileGateMissing();
+  // Re-read gate state on every render — cheap, syncs after Profile edits.
+  // Pulls the per-event profile + interests so changes the user makes
+  // inside this event flip the gate immediately, without waiting for the
+  // master profile to be touched.
+  const eventProfileSnapshot = getEventProfile(eventId ?? '');
+  const eventInterestsSnapshot = getEventInterests(eventId ?? '');
+  const gateMissing: GateMissing = getProfileGateMissing(
+    eventProfileSnapshot,
+    eventInterestsSnapshot,
+  );
   const gateOpen = gateMissing.fields.length === 0 && gateMissing.interests === 0;
 
   const [showSort, setShowSort] = useState(false);
@@ -212,25 +219,16 @@ export function ParticipantsScreen() {
               Complete your profile to unlock matches
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              We use your profile to find people you'll actually want to meet.
-              Add the missing pieces below to start getting recommendations.
+              You still need to fill in:
             </p>
 
             <ul className="space-y-2 mb-5">
-              {gateMissing.fields.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
-                  <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                    <X className="w-3 h-3 text-gray-400" />
-                  </span>
-                  {FIELD_LABEL[f]}
-                </li>
-              ))}
               {gateMissing.interests > 0 && (
                 <li className="flex items-center gap-2 text-sm text-gray-700">
                   <span className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
                     <X className="w-3 h-3 text-gray-400" />
                   </span>
-                  Add {gateMissing.interests} more {gateMissing.interests === 1 ? 'interest' : 'interests'}
+                  {gateMissing.interests} more {gateMissing.interests === 1 ? 'interest' : 'interests'}
                 </li>
               )}
             </ul>
@@ -257,8 +255,8 @@ export function ParticipantsScreen() {
                 !hiddenProfiles.find(p => p.id === person.id) &&
                 !connections.find(p => p.id === person.id)
               ),
-              getMasterProfile(),
-              getMasterInterests(),
+              eventProfileSnapshot,
+              eventInterestsSnapshot,
             )
               .map(({ user: person, score }) => (
                 <SwipeableCard
@@ -310,7 +308,7 @@ export function ParticipantsScreen() {
                     position={person.position}
                     company={person.company}
                     photoUrl={person.image}
-                    matchScore={computeMatchScore(getMasterProfile(), getMasterInterests(), person)}
+                    matchScore={computeMatchScore(eventProfileSnapshot, eventInterestsSnapshot, person)}
                     location="At the event"
                     matchedInterests={person.matchTags}
                     wantsToTalkAbout={
@@ -481,7 +479,7 @@ export function ParticipantsScreen() {
                     position={person.position}
                     company={person.company}
                     photoUrl={person.image}
-                    matchScore={computeMatchScore(getMasterProfile(), getMasterInterests(), person)}
+                    matchScore={computeMatchScore(eventProfileSnapshot, eventInterestsSnapshot, person)}
                     location="At the event"
                     matchedInterests={person.matchTags}
                     wantsToTalkAbout={

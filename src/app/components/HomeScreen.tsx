@@ -18,9 +18,8 @@ import { useEventPeriod } from './eventPeriodContext';
 import {
   getEventInterests,
   getEventProfile,
-  getMasterInterests,
-  getMasterProfile,
   getProfileCompletionPercent,
+  getProfileGateMissing,
   isProfileGateOpen,
 } from './myProfileStore';
 import { scheduleEvents } from './mockSchedule';
@@ -53,8 +52,13 @@ export function HomeScreen() {
   const rankedCandidates = useMemo(() => {
     void storeVersion;
     const open = getMatchCandidates().filter((u) => getRelationship(u.id) === 'default');
-    return rankCandidatesByMatch(open, getMasterProfile(), getMasterInterests());
-  }, [storeVersion]);
+    if (!eventId) return [];
+    return rankCandidatesByMatch(
+      open,
+      getEventProfile(eventId),
+      getEventInterests(eventId),
+    );
+  }, [storeVersion, eventId]);
 
   const topMatch = rankedCandidates[0]?.user ?? null;
   const topMatchScore = rankedCandidates[0]?.score ?? 0;
@@ -79,11 +83,20 @@ export function HomeScreen() {
 
   const participantsTotal = getMatchCandidates().length;
 
-  // Profile gate (SOW §4.4) — recompute on storeVersion bump or remount
+  // Profile gate (SOW §4.4) — uses the event-scoped profile, so the
+  // user can unlock matches by editing in /event/:id/profile without
+  // having to also touch the master profile.
   const gateOpen = useMemo(() => {
     void storeVersion;
-    return isProfileGateOpen();
-  }, [storeVersion]);
+    if (!eventId) return false;
+    return isProfileGateOpen(getEventProfile(eventId), getEventInterests(eventId));
+  }, [storeVersion, eventId]);
+
+  const gateMissing = useMemo(() => {
+    void storeVersion;
+    if (!eventId) return { fields: [], interests: 0 } as ReturnType<typeof getProfileGateMissing>;
+    return getProfileGateMissing(getEventProfile(eventId), getEventInterests(eventId));
+  }, [storeVersion, eventId]);
 
   const profileCompletion = useMemo(() => {
     void storeVersion;
@@ -587,11 +600,21 @@ export function HomeScreen() {
                   <Lock className="w-6 h-6 text-amber-600" />
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1">
-                  Complete your profile to see matches
+                  Complete your profile to unlock matches
                 </h3>
-                <p className="text-xs text-gray-500 mb-3">
-                  We need your basics + at least 7 interests to recommend the right people.
+                <p className="text-xs text-gray-500 mb-2">
+                  You still need to fill in:
                 </p>
+                <ul className="space-y-1.5 mb-3">
+                  {gateMissing.interests > 0 && (
+                    <li className="flex items-center gap-2 text-xs text-gray-700">
+                      <span className="w-4 h-4 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                        <span className="text-[10px] text-gray-400">✕</span>
+                      </span>
+                      {gateMissing.interests} more {gateMissing.interests === 1 ? 'interest' : 'interests'}
+                    </li>
+                  )}
+                </ul>
                 <button
                   onClick={() => navigate(`/event/${eventId}/profile`)}
                   className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold text-sm"

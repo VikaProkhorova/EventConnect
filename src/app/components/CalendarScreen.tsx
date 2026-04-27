@@ -435,8 +435,9 @@ export function CalendarScreen() {
               />
             ))}
 
-            {/* Now Indicator — only on "today" (day 28) */}
-            {activeDay === TODAY_DAY_NUM && (
+            {/* Now Indicator — only on "today" (day 28) and only during the live event.
+                Pre- and post-event lifecycles don't have a meaningful "now" line. */}
+            {activeDay === TODAY_DAY_NUM && period === 'during' && (
               <div
                 className="absolute -left-3 -right-3 border-t-2 border-red-600 z-20"
                 style={{ top: `${nowPosition}px` }}
