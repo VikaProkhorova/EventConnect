@@ -35,7 +35,10 @@ function readInitial(): EventPeriod {
   } catch {
     /* ignore */
   }
-  return 'during';
+  // Pre-event by default — fresh sessions land on this stage of the
+  // lifecycle so the test user sees the full timeline (before → during
+  // → after) as they explore.
+  return 'before';
 }
 
 const EventPeriodContext = createContext<EventPeriodContextValue | null>(null);

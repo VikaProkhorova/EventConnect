@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Mail, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { setLoggedIn } from './authStore';
 import { hasSetConnectionGoal } from './chatStore';
+import { useEventPeriod } from './eventPeriodContext';
 import { getMasterProfile, setMasterProfile } from './myProfileStore';
 
 /**
@@ -15,6 +16,7 @@ import { getMasterProfile, setMasterProfile } from './myProfileStore';
  */
 export function LoginScreen() {
   const navigate = useNavigate();
+  const { setPeriod } = useEventPeriod();
   const [email, setEmail] = useState('');
   const [linkSent, setLinkSent] = useState(false);
 
@@ -27,6 +29,9 @@ export function LoginScreen() {
 
   const handleConsumeLink = () => {
     setLoggedIn(email);
+    // Always start the session in pre-event mode so the test user
+    // explores the full lifecycle (before → during → after).
+    setPeriod('before');
     // Carry the login email into the master profile so the test user
     // doesn't have to re-type it on the setup form.
     const current = getMasterProfile();
