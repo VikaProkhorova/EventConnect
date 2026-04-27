@@ -15,6 +15,7 @@ import {
 } from './chatStore';
 import { getTotalPhotoCount, NEW_PHOTOS_COUNT } from './mockGallery';
 import { useEventPeriod } from './eventPeriodContext';
+import { hasSubmittedFeedback } from './FeedbackScreen';
 import {
   getEventInterests,
   getEventProfile,
@@ -437,8 +438,10 @@ export function HomeScreen() {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Post-event feedback CTA — sits above Quick Access in the after-period */}
-        {eventPeriod === 'after' && (
+        {/* Post-event feedback CTA — only while the user hasn't submitted yet.
+            Once feedback is in sessionStorage the card disappears so the
+            user isn't asked twice. */}
+        {eventPeriod === 'after' && !hasSubmittedFeedback() && (
           <button
             onClick={() => navigate(`/event/${eventId}/feedback`)}
             className="w-full bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 text-left hover:shadow-md transition-shadow"

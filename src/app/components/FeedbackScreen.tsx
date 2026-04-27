@@ -21,6 +21,11 @@ function readFeedback(): Feedback | null {
   }
 }
 
+/** True once the user has submitted the post-event feedback form. */
+export function hasSubmittedFeedback(): boolean {
+  return readFeedback() !== null;
+}
+
 export function FeedbackScreen() {
   const navigate = useNavigate();
   const { eventId } = useParams();
