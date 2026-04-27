@@ -6,7 +6,7 @@
  */
 
 import { useState } from 'react';
-import { Plus, Search, X } from 'lucide-react';
+import { ChevronDown, Plus, Search, X } from 'lucide-react';
 import { getAllCatalogInterests, INTEREST_CATALOG } from './interestsCatalog';
 
 const ALL_CATALOG = getAllCatalogInterests();
@@ -19,8 +19,16 @@ export function InterestPicker({
   onChange: (next: string[]) => void;
 }) {
   const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const q = search.trim();
   const ql = q.toLowerCase();
+
+  const toggleCategory = (cat: string) =>
+    setExpanded((prev) => ({ ...prev, [cat]: !prev[cat] }));
+
+  // While searching, force every matching category open so the user
+  // sees the hits without an extra tap.
+  const isOpen = (cat: string) => (q.length > 0 ? true : !!expanded[cat]);
 
   const isSelected = (item: string) =>
     selected.some((s) => s.toLowerCase() === item.toLowerCase());
@@ -101,36 +109,56 @@ export function InterestPicker({
         )}
       </div>
 
-      <div className="space-y-3">
-        {filteredCategories.map(([category, list]) => (
-          <div key={category}>
-            <h4 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-              {category}
-            </h4>
-            <div className="flex flex-wrap gap-1.5">
-              {list.map((item) => {
-                const sel = isSelected(item);
-                return (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => toggle(item)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
-                      sel
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    {sel ? '✓ ' : ''}
-                    {item}
-                  </button>
-                );
-              })}
+      <div className="divide-y divide-gray-100 border-y border-gray-100">
+        {filteredCategories.map(([category, list]) => {
+          const selectedInCat = list.filter((i) => isSelected(i)).length;
+          const open = isOpen(category);
+          return (
+            <div key={category}>
+              <button
+                type="button"
+                onClick={() => toggleCategory(category)}
+                className="w-full flex items-center justify-between py-2.5 text-left hover:bg-gray-50 -mx-1 px-1 rounded"
+              >
+                <span className="text-[13px] font-semibold text-gray-800">
+                  {category}
+                  {selectedInCat > 0 && (
+                    <span className="ml-2 text-[11px] font-medium text-blue-600">
+                      {selectedInCat} picked
+                    </span>
+                  )}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+                />
+              </button>
+              {open && (
+                <div className="flex flex-wrap gap-1.5 pb-3">
+                  {list.map((item) => {
+                    const sel = isSelected(item);
+                    return (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => toggle(item)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                          sel
+                            ? 'bg-blue-600 text-white border-blue-600'
+                            : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                        }`}
+                      >
+                        {sel ? '✓ ' : ''}
+                        {item}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
         {q && filteredCategories.length === 0 && !customAvailable && (
-          <p className="text-sm text-gray-400 italic">No matches.</p>
+          <p className="text-sm text-gray-400 italic py-3">No matches.</p>
         )}
       </div>
     </div>

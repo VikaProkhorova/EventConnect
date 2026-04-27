@@ -321,7 +321,7 @@ export function MasterProfileScreen() {
           {interests.length < MIN_INTERESTS && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mt-4">
               <p className="text-xs text-yellow-800">
-                <span className="font-semibold">Note:</span> You need at least {MIN_INTERESTS} interests to unlock the Match tab. ({interests.length}/{MIN_INTERESTS})
+                <span className="font-semibold">Optional, but recommended:</span> the Match tab unlocks after you pick {MIN_INTERESTS} interests. ({interests.length}/{MIN_INTERESTS})
               </p>
             </div>
           )}

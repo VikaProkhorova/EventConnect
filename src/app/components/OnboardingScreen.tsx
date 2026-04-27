@@ -58,6 +58,11 @@ export function OnboardingScreen() {
 
   const handleGeo = (granted: boolean) => {
     setGeoOptIn(granted ? 'granted' : 'denied');
+    // Tapping Allow / Not now is the user's final answer on the geo
+    // slide — finish onboarding right away. Network in Real Life will
+    // open in ghost mode automatically if location was denied.
+    markOnboardingComplete();
+    navigate(onboardingDest);
   };
 
   const handlePrimary = () => {

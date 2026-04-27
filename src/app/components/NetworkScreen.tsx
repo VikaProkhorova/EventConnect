@@ -2,6 +2,7 @@ import { ArrowLeft, Plus, Ghost, Sparkles, Radio, X, Lock } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import { useRef, useState } from 'react';
 import { useEventPeriod } from './eventPeriodContext';
+import { getGeoOptIn } from './authStore';
 
 type ViewState = 'default' | 'ghost';
 
@@ -20,7 +21,11 @@ export function NetworkScreen() {
   const navigate = useNavigate();
   const { eventId } = useParams();
   const { period } = useEventPeriod();
-  const [view, setView] = useState<ViewState>('default');
+  // If the user denied location at onboarding, open NRL in ghost mode
+  // by default — they shared they don't want to be visible.
+  const [view, setView] = useState<ViewState>(() =>
+    getGeoOptIn() === 'denied' ? 'ghost' : 'default',
+  );
   const [showSheet, setShowSheet] = useState(false);
   const [topic, setTopic] = useState('');
   const [location, setLocation] = useState('');
