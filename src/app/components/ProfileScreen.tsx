@@ -14,6 +14,8 @@ import {
   setEventProfile,
   type MyProfile,
 } from './myProfileStore';
+import { INDUSTRY_OPTIONS } from './interestsCatalog';
+import { InterestPicker } from './InterestPicker';
 
 export function ProfileScreen() {
   const navigate = useNavigate();
@@ -100,7 +102,7 @@ export function ProfileScreen() {
 
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50">
+    <div className="h-full overflow-x-hidden overflow-y-auto bg-gray-50">
       <div className="relative">
         <div className="h-32 bg-gradient-to-br from-blue-600 to-blue-700"></div>
         <button
@@ -164,16 +166,22 @@ export function ProfileScreen() {
                     type="text"
                     value={profile.position}
                     onChange={(e) => setProfile({ ...profile, position: e.target.value })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Position"
                   />
                   <input
                     type="text"
+                    list="industry-suggestions-event"
                     value={profile.industry}
                     onChange={(e) => setProfile({ ...profile, industry: e.target.value })}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Industry"
                   />
+                  <datalist id="industry-suggestions-event">
+                    {INDUSTRY_OPTIONS.map((i) => (
+                      <option key={i} value={i} />
+                    ))}
+                  </datalist>
                 </div>
                 <select
                   value={profile.grade}
@@ -317,42 +325,25 @@ export function ProfileScreen() {
           </section>
 
           <section className="bg-white rounded-xl p-5 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold">My Interests</h3>
               <span className="text-sm text-gray-500">{interests.length} selected</span>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {interests.map((interest, i) => (
-                <span
-                  key={i}
-                  className={`bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 ${
-                    isEditing ? 'pr-2' : ''
-                  }`}
-                >
-                  {interest}
-                  {isEditing && (
-                    <button
-                      onClick={() => setInterests(interests.filter((_, idx) => idx !== i))}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      ✕
-                    </button>
-                  )}
-                </span>
-              ))}
-            </div>
-            {isEditing && (
-              <input
-                type="text"
-                placeholder="Type interest and press Enter"
-                className="w-full mt-4 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                    setInterests([...interests, e.currentTarget.value.trim()]);
-                    e.currentTarget.value = '';
-                  }
-                }}
-              />
+            {isEditing ? (
+              <InterestPicker selected={interests} onChange={setInterests} />
+            ) : interests.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {interests.map((interest, i) => (
+                  <span
+                    key={i}
+                    className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-medium"
+                  >
+                    {interest}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400 text-sm italic">Nothing yet — pick a few in edit mode.</p>
             )}
             {!isEditing && (
               <button

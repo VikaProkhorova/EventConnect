@@ -26,11 +26,12 @@ import {
   getMasterProfile,
   isProfileGateOpen,
   MIN_INTERESTS,
-  REQUIRED_FIELDS,
   setMasterInterests,
   setMasterProfile,
   type MyProfile,
 } from './myProfileStore';
+import { INDUSTRY_OPTIONS } from './interestsCatalog';
+import { InterestPicker } from './InterestPicker';
 
 const GRADES = ['Junior', 'Middle', 'Senior', 'Lead', 'Head', 'C-level'];
 
@@ -97,13 +98,12 @@ export function MasterProfileScreen() {
     setIsEditing(false);
   };
 
-  // Live gate-check on the current draft so the Save button can disable
-  // and explain what's still missing while the user types.
+  // Gate is interest-only: enable Save & continue once the user has
+  // picked at least MIN_INTERESTS topics. Other profile fields are
+  // optional (the test asks people to spend their time on the parts
+  // that actually drive matching).
   const draftFullProfile: MyProfile = { ...profile, photoUrl: profilePhoto };
   const draftGateOpen = isProfileGateOpen(draftFullProfile, interests);
-  const missingFieldCount = REQUIRED_FIELDS.filter(
-    (f) => !String((draftFullProfile as MyProfile)[f] ?? '').trim(),
-  ).length;
   const missingInterestCount = Math.max(0, MIN_INTERESTS - interests.length);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +115,7 @@ export function MasterProfileScreen() {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50">
+    <div className="h-full overflow-x-hidden overflow-y-auto bg-gray-50">
       <div className="bg-white px-4 py-4 border-b flex items-center gap-3">
         {!isSetupMode && (
           <button onClick={() => navigate('/events')} className="p-1">
@@ -132,8 +132,8 @@ export function MasterProfileScreen() {
         <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
         {isSetupMode ? (
           <p className="text-xs text-blue-900">
-            Welcome! Fill in the basics so we can match you with the right people.
-            Required: <span className="font-semibold">all five top fields + at least {MIN_INTERESTS} interests</span>.
+            Welcome! The more you share the better we can match you, but only one
+            thing is required: <span className="font-semibold">at least {MIN_INTERESTS} interests</span>.
           </p>
         ) : (
           <p className="text-xs text-blue-900">
@@ -211,21 +211,30 @@ export function MasterProfileScreen() {
                     value={profile.position}
                     onChange={(e) => setProfile({ ...profile, position: e.target.value })}
                     placeholder="Position"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <input
                     type="text"
+                    list="industry-suggestions"
                     value={profile.industry}
                     onChange={(e) => setProfile({ ...profile, industry: e.target.value })}
                     placeholder="Industry"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <datalist id="industry-suggestions">
+                    {INDUSTRY_OPTIONS.map((i) => (
+                      <option key={i} value={i} />
+                    ))}
+                  </datalist>
                 </div>
                 <select
                   value={profile.grade}
                   onChange={(e) => setProfile({ ...profile, grade: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
+                  <option value="" disabled>
+                    Select grade
+                  </option>
                   {GRADES.map((g) => (
                     <option key={g} value={g}>{g}</option>
                   ))}
@@ -254,11 +263,8 @@ export function MasterProfileScreen() {
               </button>
               {isSetupMode && !draftGateOpen && (
                 <p className="text-xs text-gray-500 text-center mt-2">
-                  Still missing
-                  {missingFieldCount > 0 && ` ${missingFieldCount} required field${missingFieldCount === 1 ? '' : 's'}`}
-                  {missingFieldCount > 0 && missingInterestCount > 0 && ' and'}
-                  {missingInterestCount > 0 && ` ${missingInterestCount} more interest${missingInterestCount === 1 ? '' : 's'}`}
-                  .
+                  Pick {missingInterestCount} more
+                  {missingInterestCount === 1 ? ' interest' : ' interests'} to continue.
                 </p>
               )}
             </div>
@@ -329,42 +335,27 @@ export function MasterProfileScreen() {
 
         {/* Interests */}
         <section className="bg-white rounded-xl p-5 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold">My Interests</h3>
-            <span className="text-sm text-gray-500">{interests.length} selected</span>
+            <span className="text-sm text-gray-500">
+              {interests.length} selected
+            </span>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {interests.map((interest, i) => (
-              <span
-                key={i}
-                className={`bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 ${
-                  isEditing ? 'pr-2' : ''
-                }`}
-              >
-                {interest}
-                {isEditing && (
-                  <button
-                    onClick={() => setInterestsState(interests.filter((_, idx) => idx !== i))}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    ✕
-                  </button>
-                )}
-              </span>
-            ))}
-          </div>
-          {isEditing && (
-            <input
-              type="text"
-              placeholder="Type interest and press Enter"
-              className="w-full mt-4 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                  setInterestsState([...interests, e.currentTarget.value.trim()]);
-                  e.currentTarget.value = '';
-                }
-              }}
-            />
+          {isEditing ? (
+            <InterestPicker selected={interests} onChange={setInterestsState} />
+          ) : interests.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {interests.map((interest, i) => (
+                <span
+                  key={i}
+                  className="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-full text-xs font-medium"
+                >
+                  {interest}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 text-sm italic">Nothing yet — pick a few in edit mode.</p>
           )}
           {interests.length < MIN_INTERESTS && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mt-4">

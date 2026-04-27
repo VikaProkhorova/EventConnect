@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Mail, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { setLoggedIn } from './authStore';
-import { isProfileGateOpen } from './myProfileStore';
+import { getMasterProfile, isProfileGateOpen, setMasterProfile } from './myProfileStore';
 
 /**
  * Magic-link login (SOW §4.15).
@@ -26,6 +26,12 @@ export function LoginScreen() {
 
   const handleConsumeLink = () => {
     setLoggedIn(email);
+    // Carry the login email into the master profile so the test user
+    // doesn't have to re-type it on the setup form.
+    const current = getMasterProfile();
+    if (!current.email) {
+      setMasterProfile({ ...current, email });
+    }
     // Test flow: empty account → straight to profile setup. Returning users
     // with a complete profile skip past it to /events.
     if (!isProfileGateOpen()) {

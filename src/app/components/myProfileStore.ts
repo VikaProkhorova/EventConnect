@@ -23,15 +23,16 @@ export type MyProfile = {
 };
 
 /**
- * Defaults are intentionally empty: a fresh session lands on the login
- * screen, then on the master-profile setup form so the test user fills
- * everything from scratch (used to measure profile-completion time).
+ * Defaults represent what we'd realistically receive from the event's
+ * registration data: name, role, company, industry. Everything else
+ * (grade, photo, contacts, want-to-talk-about, interests) starts blank
+ * so the test user fills it themselves.
  */
 export const DEFAULT_PROFILE: MyProfile = {
-  name: '',
-  company: '',
-  position: '',
-  industry: '',
+  name: 'John Doe',
+  company: 'Microsoft',
+  position: 'Software Engineer',
+  industry: 'Technology',
   grade: '',
   wantToTalkAbout: [],
   description: '',
@@ -151,14 +152,21 @@ export type GateMissing = {
   interests: number; // how many more interests are still needed
 };
 
-/** Returns missing pieces; if everything is satisfied, both arrays/numbers are empty. */
+/**
+ * Gate is interest-only: at least MIN_INTERESTS picked. Other fields
+ * (name, company, etc.) are nice-to-have for completion %, but are
+ * never blockers. `fields` is therefore always empty in the gate
+ * payload — kept for API compatibility with screens that still iterate
+ * it.
+ */
 export function getProfileGateMissing(
-  profile: MyProfile = getMyProfile(),
+  _profile: MyProfile = getMyProfile(),
   interests: string[] = getMyInterests(),
 ): GateMissing {
-  const missingFields = REQUIRED_FIELDS.filter((f) => !String(profile[f] ?? '').trim());
-  const missingInterests = Math.max(0, MIN_INTERESTS - interests.length);
-  return { fields: missingFields, interests: missingInterests };
+  return {
+    fields: [],
+    interests: Math.max(0, MIN_INTERESTS - interests.length),
+  };
 }
 
 export function isProfileGateOpen(
