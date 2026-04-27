@@ -17,13 +17,17 @@ export function MainLayout() {
   const pathParts = location.pathname.split('/');
   const currentTab = pathParts[pathParts.length - 1] || 'home';
 
+  // Hide the bottom nav while the user is going through the setup flow
+  // (e.g. /event/1/profile?setup=1) so they can't tab away mid-flow.
+  const isSetupMode = new URLSearchParams(location.search).get('setup') === '1';
+
   return (
     <div className="h-full w-full flex flex-col bg-white overflow-x-hidden">
       <div className="flex-1 overflow-x-hidden overflow-y-auto">
         <Outlet />
       </div>
 
-      <nav className="border-t bg-white">
+      {!isSetupMode && (<nav className="border-t bg-white">
         <div className="flex items-center justify-around py-2">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -50,7 +54,7 @@ export function MainLayout() {
             );
           })}
         </div>
-      </nav>
+      </nav>)}
     </div>
   );
 }

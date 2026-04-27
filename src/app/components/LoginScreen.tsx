@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Mail, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { setLoggedIn } from './authStore';
-import { getMasterProfile, isProfileGateOpen, setMasterProfile } from './myProfileStore';
+import { hasSetConnectionGoal } from './chatStore';
+import { getMasterProfile, setMasterProfile } from './myProfileStore';
 
 /**
  * Magic-link login (SOW §4.15).
@@ -32,10 +33,12 @@ export function LoginScreen() {
     if (!current.email) {
       setMasterProfile({ ...current, email });
     }
-    // Test flow: empty account → straight to profile setup. Returning users
-    // with a complete profile skip past it to /events.
-    if (!isProfileGateOpen()) {
-      navigate('/me?setup=1');
+    // Test flow: log in → set up the Tech Summit event profile (the
+    // event-scoped one, not the master profile). The connection goal
+    // there is the only required field. Returning users who already
+    // picked a goal skip past setup to /events.
+    if (!hasSetConnectionGoal()) {
+      navigate('/event/1/profile?setup=1');
     } else {
       navigate('/events');
     }

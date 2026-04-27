@@ -19,17 +19,19 @@ import { LoginScreen } from './components/LoginScreen';
 import { OnboardingScreen } from './components/OnboardingScreen';
 import { EventPeriodProvider } from './components/eventPeriodContext';
 import { isLoggedIn } from './components/authStore';
-import { isProfileGateOpen } from './components/myProfileStore';
+import { hasSetConnectionGoal } from './components/chatStore';
 
 /**
- * Decides where the test user lands when they hit the root URL:
- *   not logged in        → /login (where the test starts)
- *   logged in, blank profile → /me?setup=1 (forced profile setup)
- *   logged in, profile filled → /events
+ * Where the test user lands when they hit the root URL:
+ *   not logged in     → /login (start of the test)
+ *   logged in, no goal yet → /event/1/profile?setup=1 (Tech Summit profile setup)
+ *   logged in + goal set   → /events
  */
 function RootRedirect() {
   if (!isLoggedIn()) return <Navigate to="/login" replace />;
-  if (!isProfileGateOpen()) return <Navigate to="/me?setup=1" replace />;
+  if (!hasSetConnectionGoal()) {
+    return <Navigate to="/event/1/profile?setup=1" replace />;
+  }
   return <Navigate to="/events" replace />;
 }
 

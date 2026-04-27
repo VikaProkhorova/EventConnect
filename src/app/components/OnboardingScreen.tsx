@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import {
   Sparkles,
   QrCode,
@@ -20,6 +20,12 @@ import { markOnboardingComplete, setGeoOptIn } from './authStore';
  */
 export function OnboardingScreen() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromSetup = searchParams.get('from') === 'setup';
+  // After the test flow we want to land directly inside Tech Summit;
+  // any other entrypoint (re-running onboarding from settings, etc.)
+  // goes back to the events list.
+  const onboardingDest = fromSetup ? '/event/1/home' : '/events';
   const [step, setStep] = useState(0);
 
   const slides = [
@@ -57,7 +63,7 @@ export function OnboardingScreen() {
   const handlePrimary = () => {
     if (isLast) {
       markOnboardingComplete();
-      navigate('/events');
+      navigate(onboardingDest);
     } else {
       setStep((s) => s + 1);
     }
@@ -65,7 +71,7 @@ export function OnboardingScreen() {
 
   const handleSkip = () => {
     markOnboardingComplete();
-    navigate('/events');
+    navigate(onboardingDest);
   };
 
   return (

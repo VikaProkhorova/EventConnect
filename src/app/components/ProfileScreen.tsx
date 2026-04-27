@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Edit2, Mail, Linkedin, MessageSquare, Settings, Camera, Plus, X, ChevronDown, Target } from 'lucide-react';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { ArrowRight, Edit2, Info, Mail, Linkedin, MessageSquare, Settings, Camera, Plus, X, ChevronDown, Target } from 'lucide-react';
 import {
   CONNECTION_GOAL_OPTIONS,
   getConnectionGoal,
+  hasSetConnectionGoal,
   setConnectionGoal,
 } from './chatStore';
 import {
@@ -20,7 +21,11 @@ import { InterestPicker } from './InterestPicker';
 export function ProfileScreen() {
   const navigate = useNavigate();
   const { eventId } = useParams();
-  const [isEditing, setIsEditing] = useState(false);
+  const [searchParams] = useSearchParams();
+  const isSetupMode = searchParams.get('setup') === '1';
+  // In setup mode we open straight in edit state so the test user can
+  // start typing right away.
+  const [isEditing, setIsEditing] = useState(isSetupMode);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initial state hydrated from per-event snapshot (snapshots from master on first entry).
@@ -40,7 +45,11 @@ export function ProfileScreen() {
   });
 
   /* ───────── Connection goal (drives Networking Opportunities progress bar) ───────── */
-  const [connectionGoal, setLocalGoal] = useState<number>(() => getConnectionGoal());
+  // Null means the user hasn't picked yet — in setup mode this is the
+  // single hard requirement that gates "Save & continue".
+  const [connectionGoal, setLocalGoal] = useState<number | null>(
+    () => (hasSetConnectionGoal() ? getConnectionGoal() : null),
+  );
   const [showGoalPicker, setShowGoalPicker] = useState(false);
 
   const updateGoal = (n: number) => {
@@ -51,7 +60,7 @@ export function ProfileScreen() {
 
   // Re-sync if storage changed elsewhere (e.g. another tab)
   useEffect(() => {
-    setLocalGoal(getConnectionGoal());
+    if (hasSetConnectionGoal()) setLocalGoal(getConnectionGoal());
   }, []);
 
   /* ───────── Want-to-talk-about helpers ───────── */
@@ -73,6 +82,8 @@ export function ProfileScreen() {
   };
 
   const handleSaveProfile = () => {
+    // In setup mode the connection goal is the only hard requirement.
+    if (isSetupMode && connectionGoal === null) return;
     // Drop empty options on save (per spec)
     const cleaned = {
       ...profile,
@@ -103,15 +114,27 @@ export function ProfileScreen() {
 
   return (
     <div className="h-full overflow-x-hidden overflow-y-auto bg-gray-50">
+      {isSetupMode && (
+        <div className="bg-blue-50 border-b border-blue-100 px-4 py-2.5 flex items-start gap-2">
+          <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+          <p className="text-xs text-blue-900">
+            Welcome to Tech Summit 2026! Set up your event profile —
+            only <span className="font-semibold">connection goal</span> is required.
+            {' '}You can keep editing later.
+          </p>
+        </div>
+      )}
       <div className="relative">
         <div className="h-32 bg-gradient-to-br from-blue-600 to-blue-700"></div>
-        <button
-          onClick={() => navigate(`/event/${eventId}/settings`)}
-          className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:bg-white"
-          aria-label="Settings"
-        >
-          <Settings className="w-5 h-5 text-gray-700" />
-        </button>
+        {!isSetupMode && (
+          <button
+            onClick={() => navigate(`/event/${eventId}/settings`)}
+            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:bg-white"
+            aria-label="Settings"
+          >
+            <Settings className="w-5 h-5 text-gray-700" />
+          </button>
+        )}
         <div className="px-4 pb-2">
           <div className="relative -mt-16 mb-4">
             <button
@@ -210,31 +233,52 @@ export function ProfileScreen() {
           </div>
 
           {isEditing && (
-            <button
-              onClick={handleSaveProfile}
-              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold mb-4"
-            >
-              Save Changes
-            </button>
+            <div className="mb-4">
+              <button
+                onClick={handleSaveProfile}
+                disabled={isSetupMode && connectionGoal === null}
+                className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isSetupMode ? 'Save & continue' : 'Save Changes'}
+              </button>
+              {isSetupMode && connectionGoal === null && (
+                <p className="text-xs text-gray-500 text-center mt-2">
+                  Choose how many people you want to connect with to continue.
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>
 
       <div className="px-4 space-y-4 pb-6">
-          {/* Connection goal — visible only on own profile */}
+          {/* Connection goal — required in setup, editable always */}
           <section className="bg-white rounded-xl p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
               <Target className="w-4 h-4 text-blue-600" />
               <h3 className="text-xs font-semibold text-gray-500 uppercase">
                 How many people do you want to connect with?
               </h3>
+              {isSetupMode && connectionGoal === null && (
+                <span className="ml-auto text-[10px] font-semibold text-amber-700 bg-amber-100 rounded-full px-2 py-0.5">
+                  Required
+                </span>
+              )}
             </div>
             <div className="relative">
               <button
                 onClick={() => setShowGoalPicker(!showGoalPicker)}
-                className="w-full flex items-center justify-between px-4 py-3 bg-blue-50 text-blue-700 rounded-lg font-medium hover:bg-blue-100 transition-colors"
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-medium transition-colors ${
+                  connectionGoal !== null
+                    ? 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                    : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+                }`}
               >
-                <span>{connectionGoal} {connectionGoal === 1 ? 'person' : 'people'}</span>
+                <span>
+                  {connectionGoal !== null
+                    ? `${connectionGoal} ${connectionGoal === 1 ? 'person' : 'people'}`
+                    : 'Pick a number'}
+                </span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${showGoalPicker ? 'rotate-180' : ''}`} />
               </button>
               {showGoalPicker && (
@@ -424,6 +468,15 @@ export function ProfileScreen() {
             </div>
           </section>
 
+          {isSetupMode && !isEditing && (
+            <button
+              onClick={() => navigate('/welcome?from=setup')}
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 mt-2"
+            >
+              Continue
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
       </div>
     </div>
   );

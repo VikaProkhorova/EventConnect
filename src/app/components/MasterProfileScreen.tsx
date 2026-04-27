@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import {
   ArrowLeft,
   Edit2,
@@ -24,7 +24,6 @@ import {
   DEFAULT_PROFILE,
   getMasterInterests,
   getMasterProfile,
-  isProfileGateOpen,
   MIN_INTERESTS,
   setMasterInterests,
   setMasterProfile,
@@ -37,12 +36,8 @@ const GRADES = ['Junior', 'Middle', 'Senior', 'Lead', 'Head', 'C-level'];
 
 export function MasterProfileScreen() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const isSetupMode = searchParams.get('setup') === '1';
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // In setup mode the form opens straight in edit state — the test user
-  // shouldn't have to find the pencil button before they can type.
-  const [isEditing, setIsEditing] = useState(isSetupMode);
+  const [isEditing, setIsEditing] = useState(false);
 
   const initial = getMasterProfile();
   const [profilePhoto, setProfilePhoto] = useState(initial.photoUrl);
@@ -88,23 +83,10 @@ export function MasterProfileScreen() {
       wantToTalkAbout: profile.wantToTalkAbout.map((s) => s.trim()).filter(Boolean),
     };
     setProfile(cleaned);
-    const fullProfile: MyProfile = { ...cleaned, photoUrl: profilePhoto };
-    setMasterProfile(fullProfile);
+    setMasterProfile({ ...cleaned, photoUrl: profilePhoto });
     setMasterInterests(interests);
-    if (isSetupMode && isProfileGateOpen(fullProfile, interests)) {
-      navigate('/events');
-      return;
-    }
     setIsEditing(false);
   };
-
-  // Gate is interest-only: enable Save & continue once the user has
-  // picked at least MIN_INTERESTS topics. Other profile fields are
-  // optional (the test asks people to spend their time on the parts
-  // that actually drive matching).
-  const draftFullProfile: MyProfile = { ...profile, photoUrl: profilePhoto };
-  const draftGateOpen = isProfileGateOpen(draftFullProfile, interests);
-  const missingInterestCount = Math.max(0, MIN_INTERESTS - interests.length);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -117,30 +99,18 @@ export function MasterProfileScreen() {
   return (
     <div className="h-full overflow-x-hidden overflow-y-auto bg-gray-50">
       <div className="bg-white px-4 py-4 border-b flex items-center gap-3">
-        {!isSetupMode && (
-          <button onClick={() => navigate('/events')} className="p-1">
-            <ArrowLeft className="w-6 h-6 text-gray-700" />
-          </button>
-        )}
-        <h1 className="font-bold text-xl">
-          {isSetupMode ? 'Set up your profile' : 'My profile'}
-        </h1>
+        <button onClick={() => navigate('/events')} className="p-1">
+          <ArrowLeft className="w-6 h-6 text-gray-700" />
+        </button>
+        <h1 className="font-bold text-xl">My profile</h1>
       </div>
 
-      {/* Top banner — different copy in setup vs. normal master-profile mode */}
       <div className="bg-blue-50 border-b border-blue-100 px-4 py-2.5 flex items-start gap-2">
         <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-        {isSetupMode ? (
-          <p className="text-xs text-blue-900">
-            Welcome! The more you share the better we can match you, but only one
-            thing is required: <span className="font-semibold">at least {MIN_INTERESTS} interests</span>.
-          </p>
-        ) : (
-          <p className="text-xs text-blue-900">
-            This is your master profile. Changes here apply to <span className="font-semibold">future events you join</span>.
-            Inside events you've already opened, edit the profile within the event.
-          </p>
-        )}
+        <p className="text-xs text-blue-900">
+          This is your master profile. Changes here apply to <span className="font-semibold">future events you join</span>.
+          Inside events you've already opened, edit the profile within the event.
+        </p>
       </div>
 
       <div className="relative">
@@ -253,21 +223,12 @@ export function MasterProfileScreen() {
           </div>
 
           {isEditing && (
-            <div className="mb-4">
-              <button
-                onClick={handleSave}
-                disabled={isSetupMode && !draftGateOpen}
-                className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {isSetupMode ? 'Save & continue' : 'Save Changes'}
-              </button>
-              {isSetupMode && !draftGateOpen && (
-                <p className="text-xs text-gray-500 text-center mt-2">
-                  Pick {missingInterestCount} more
-                  {missingInterestCount === 1 ? ' interest' : ' interests'} to continue.
-                </p>
-              )}
-            </div>
+            <button
+              onClick={handleSave}
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold mb-4"
+            >
+              Save Changes
+            </button>
           )}
         </div>
       </div>

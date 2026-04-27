@@ -175,6 +175,15 @@ export function getConnectionGoal(): number {
   }
 }
 
+/** True only if the user has explicitly stored a connection goal. */
+export function hasSetConnectionGoal(): boolean {
+  try {
+    return sessionStorage.getItem(CONNECTION_GOAL_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
 export function setConnectionGoal(n: number): void {
   const clamped = Math.max(MIN_GOAL, Math.min(MAX_GOAL, Math.round(n)));
   try {
