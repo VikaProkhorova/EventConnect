@@ -22,32 +22,26 @@ export type MyProfile = {
   photoUrl: string;
 };
 
+/**
+ * Defaults are intentionally empty: a fresh session lands on the login
+ * screen, then on the master-profile setup form so the test user fills
+ * everything from scratch (used to measure profile-completion time).
+ */
 export const DEFAULT_PROFILE: MyProfile = {
-  name: 'John Doe',
-  company: 'Microsoft',
-  position: 'Software Engineer',
-  industry: 'Technology',
-  grade: 'Senior',
+  name: '',
+  company: '',
+  position: '',
+  industry: '',
+  grade: '',
   wantToTalkAbout: [],
   description: '',
-  email: 'john.doe@microsoft.com',
+  email: '',
   linkedin: '',
   telegram: '',
-  photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400',
+  photoUrl: '',
 };
 
-export const DEFAULT_INTERESTS = [
-  'Product Management',
-  'AI & Machine Learning',
-  'UX Design',
-  'Data Analytics',
-  'Leadership',
-  'Startups',
-  'Mobile Development',
-  'Cloud Computing',
-  'DevOps',
-  'Agile Methodologies',
-];
+export const DEFAULT_INTERESTS: string[] = [];
 
 /**
  * Two layers of storage:

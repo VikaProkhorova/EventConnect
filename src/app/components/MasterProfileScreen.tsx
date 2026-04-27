@@ -8,7 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import {
   ArrowLeft,
   Edit2,
@@ -24,7 +24,9 @@ import {
   DEFAULT_PROFILE,
   getMasterInterests,
   getMasterProfile,
+  isProfileGateOpen,
   MIN_INTERESTS,
+  REQUIRED_FIELDS,
   setMasterInterests,
   setMasterProfile,
   type MyProfile,
@@ -34,8 +36,12 @@ const GRADES = ['Junior', 'Middle', 'Senior', 'Lead', 'Head', 'C-level'];
 
 export function MasterProfileScreen() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isSetupMode = searchParams.get('setup') === '1';
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  // In setup mode the form opens straight in edit state — the test user
+  // shouldn't have to find the pencil button before they can type.
+  const [isEditing, setIsEditing] = useState(isSetupMode);
 
   const initial = getMasterProfile();
   const [profilePhoto, setProfilePhoto] = useState(initial.photoUrl);
@@ -81,10 +87,24 @@ export function MasterProfileScreen() {
       wantToTalkAbout: profile.wantToTalkAbout.map((s) => s.trim()).filter(Boolean),
     };
     setProfile(cleaned);
-    setMasterProfile({ ...cleaned, photoUrl: profilePhoto });
+    const fullProfile: MyProfile = { ...cleaned, photoUrl: profilePhoto };
+    setMasterProfile(fullProfile);
     setMasterInterests(interests);
+    if (isSetupMode && isProfileGateOpen(fullProfile, interests)) {
+      navigate('/events');
+      return;
+    }
     setIsEditing(false);
   };
+
+  // Live gate-check on the current draft so the Save button can disable
+  // and explain what's still missing while the user types.
+  const draftFullProfile: MyProfile = { ...profile, photoUrl: profilePhoto };
+  const draftGateOpen = isProfileGateOpen(draftFullProfile, interests);
+  const missingFieldCount = REQUIRED_FIELDS.filter(
+    (f) => !String((draftFullProfile as MyProfile)[f] ?? '').trim(),
+  ).length;
+  const missingInterestCount = Math.max(0, MIN_INTERESTS - interests.length);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -97,19 +117,30 @@ export function MasterProfileScreen() {
   return (
     <div className="h-full overflow-y-auto bg-gray-50">
       <div className="bg-white px-4 py-4 border-b flex items-center gap-3">
-        <button onClick={() => navigate('/events')} className="p-1">
-          <ArrowLeft className="w-6 h-6 text-gray-700" />
-        </button>
-        <h1 className="font-bold text-xl">My profile</h1>
+        {!isSetupMode && (
+          <button onClick={() => navigate('/events')} className="p-1">
+            <ArrowLeft className="w-6 h-6 text-gray-700" />
+          </button>
+        )}
+        <h1 className="font-bold text-xl">
+          {isSetupMode ? 'Set up your profile' : 'My profile'}
+        </h1>
       </div>
 
-      {/* Disclaimer */}
+      {/* Top banner — different copy in setup vs. normal master-profile mode */}
       <div className="bg-blue-50 border-b border-blue-100 px-4 py-2.5 flex items-start gap-2">
         <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-blue-900">
-          This is your master profile. Changes here apply to <span className="font-semibold">future events you join</span>.
-          Inside events you've already opened, edit the profile within the event.
-        </p>
+        {isSetupMode ? (
+          <p className="text-xs text-blue-900">
+            Welcome! Fill in the basics so we can match you with the right people.
+            Required: <span className="font-semibold">all five top fields + at least {MIN_INTERESTS} interests</span>.
+          </p>
+        ) : (
+          <p className="text-xs text-blue-900">
+            This is your master profile. Changes here apply to <span className="font-semibold">future events you join</span>.
+            Inside events you've already opened, edit the profile within the event.
+          </p>
+        )}
       </div>
 
       <div className="relative">
@@ -213,12 +244,24 @@ export function MasterProfileScreen() {
           </div>
 
           {isEditing && (
-            <button
-              onClick={handleSave}
-              className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold mb-4"
-            >
-              Save Changes
-            </button>
+            <div className="mb-4">
+              <button
+                onClick={handleSave}
+                disabled={isSetupMode && !draftGateOpen}
+                className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {isSetupMode ? 'Save & continue' : 'Save Changes'}
+              </button>
+              {isSetupMode && !draftGateOpen && (
+                <p className="text-xs text-gray-500 text-center mt-2">
+                  Still missing
+                  {missingFieldCount > 0 && ` ${missingFieldCount} required field${missingFieldCount === 1 ? '' : 's'}`}
+                  {missingFieldCount > 0 && missingInterestCount > 0 && ' and'}
+                  {missingInterestCount > 0 && ` ${missingInterestCount} more interest${missingInterestCount === 1 ? '' : 's'}`}
+                  .
+                </p>
+              )}
+            </div>
           )}
         </div>
       </div>

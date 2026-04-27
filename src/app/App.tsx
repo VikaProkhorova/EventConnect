@@ -18,6 +18,20 @@ import { MasterProfileScreen } from './components/MasterProfileScreen';
 import { LoginScreen } from './components/LoginScreen';
 import { OnboardingScreen } from './components/OnboardingScreen';
 import { EventPeriodProvider } from './components/eventPeriodContext';
+import { isLoggedIn } from './components/authStore';
+import { isProfileGateOpen } from './components/myProfileStore';
+
+/**
+ * Decides where the test user lands when they hit the root URL:
+ *   not logged in        → /login (where the test starts)
+ *   logged in, blank profile → /me?setup=1 (forced profile setup)
+ *   logged in, profile filled → /events
+ */
+function RootRedirect() {
+  if (!isLoggedIn()) return <Navigate to="/login" replace />;
+  if (!isProfileGateOpen()) return <Navigate to="/me?setup=1" replace />;
+  return <Navigate to="/events" replace />;
+}
 
 export default function App() {
   return (
@@ -45,7 +59,7 @@ export default function App() {
             <Route path="network" element={<NetworkScreen />} />
             <Route index element={<Navigate to="home" replace />} />
           </Route>
-          <Route path="/" element={<Navigate to="/events" replace />} />
+          <Route path="/" element={<RootRedirect />} />
         </Routes>
         </div>
       </BrowserRouter>
