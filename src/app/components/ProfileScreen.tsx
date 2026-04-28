@@ -168,7 +168,46 @@ export function ProfileScreen() {
           </div>
 
           <div className="mb-4">
-            {isEditing ? (
+            {isEditing && isSetupMode ? (
+              // First-time setup: name/company/position/industry come from
+              // the event organizer, so we render them read-only with a
+              // small caption. Grade is still picked by the user.
+              <div className="space-y-3">
+                <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg font-bold text-2xl text-gray-700">
+                  {profile.name}
+                </div>
+                <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
+                  {profile.company}
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-1 min-w-0 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 truncate">
+                    {profile.position}
+                  </div>
+                  <div className="flex-1 min-w-0 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600 truncate">
+                    {profile.industry}
+                  </div>
+                </div>
+                <p className="text-[11px] text-gray-500 italic flex items-center gap-1.5">
+                  <Info className="w-3 h-3 flex-shrink-0" />
+                  Auto-filled from your event registration. Contact the
+                  organizer to update.
+                </p>
+                <select
+                  value={profile.grade}
+                  onChange={(e) => setProfile({ ...profile, grade: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="" disabled>
+                    Select grade
+                  </option>
+                  <option value="Junior">Junior</option>
+                  <option value="Middle">Middle</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Lead">Lead</option>
+                  <option value="Head">Head</option>
+                </select>
+              </div>
+            ) : isEditing ? (
               <div className="space-y-3">
                 <input
                   type="text"
@@ -211,6 +250,9 @@ export function ProfileScreen() {
                   onChange={(e) => setProfile({ ...profile, grade: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
+                  <option value="" disabled>
+                    Select grade
+                  </option>
                   <option value="Junior">Junior</option>
                   <option value="Middle">Middle</option>
                   <option value="Senior">Senior</option>
