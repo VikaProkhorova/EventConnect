@@ -8,6 +8,14 @@ This repository hosts the high-fidelity interactive prototype built for a Bachel
 
 ---
 
+## How this was built
+
+The interactive prototype was scaffolded with **[Figma Make](https://www.figma.com/make/)** — Figma's AI-assisted prototyping tool — which generated the initial React + Tailwind component structure directly from the design system. From that baseline the prototype was iterated in code: routing, state, gesture interactions, gating logic, period-aware UI, mock data, animations, and the bug-fix passes were all written manually on top of the Figma Make output.
+
+This fits a Lean UX / AI-assisted prototyping workflow: Figma Make compresses the "blank-canvas to clickable React" step from days to minutes, leaving more thesis time for user research, iteration, and the engineering decisions that the AI doesn't make for you.
+
+---
+
 ## Live demo
 
 **[event-connect-phi.vercel.app](https://event-connect-phi.vercel.app/events)**
